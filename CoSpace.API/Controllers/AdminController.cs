@@ -18,7 +18,6 @@ namespace CoSpace.API.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("admins")]
         public async Task<IActionResult> GetAdmins()
         {
