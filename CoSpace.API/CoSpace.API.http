@@ -1,0 +1,6 @@
+@CoSpace.API_HostAddress = http://localhost:5124
+
+GET {{CoSpace.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

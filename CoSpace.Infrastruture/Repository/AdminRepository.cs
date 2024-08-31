@@ -1,0 +1,66 @@
+﻿using CoSpace.Core.Entities;
+using CoSpace.Core.Interface;
+using CoSpace.Infrastruture.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CoSpace.Infrastruture.Repository
+{
+    public class AdminRepository(ApplicationDbContext dbContext) : IAdminRepository
+    {
+        public async Task<IEnumerable<Admin>> GetAdmins()
+        {
+            return await dbContext.Admin.ToListAsync(); 
+        }
+
+        public async Task<Admin> GetAdminById(int id)
+        {
+            return await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Admin> AddAdmin(Admin admin)
+        {
+            dbContext.Admin.Add(admin);
+
+            await dbContext.SaveChangesAsync();
+            
+            return admin;
+        }
+
+        public async Task<bool> UpdateAdmin(int Id, Admin admin)
+        {
+            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x=>x.Id == Id);
+            
+            if (existingRecord is not null)
+            {
+                existingRecord.FirstName = admin.FirstName;
+                existingRecord.LastName = admin.LastName;
+                existingRecord.Email = admin.Email;
+                existingRecord.Password = admin.Password; 
+                
+                return await dbContext.SaveChangesAsync() > 0;
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteAdmin(int Id, Admin admin)
+        {
+            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == Id);
+
+            if (existingRecord is not null)
+            {
+                existingRecord.IsDeleted = true;
+
+                return await dbContext.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+
+    }
+}
