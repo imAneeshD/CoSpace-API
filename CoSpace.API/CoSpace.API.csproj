@@ -19,4 +19,8 @@
     <ProjectReference Include="..\CoSpace.Infrastruture\CoSpace.Infrastruture.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Response\" />
+  </ItemGroup>
+
 </Project>
