@@ -10,9 +10,9 @@ namespace CoSpace.Core.Entities
     {
         public int Id { get; set; }
         public bool IsDeleted { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int UpdatedBy { get; set; }
-        public DateTime UpdatedDate { get; set; }
+        public int CreatedBy { get; set; } = 1; 
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public int UpdatedBy { get; set; } = 1;
+        public DateTime UpdatedDate { get; set; } = DateTime.Now;
     }
 }
