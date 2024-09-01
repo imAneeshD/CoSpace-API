@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoSpace.Application.Queries
+namespace CoSpace.Application.Queries.AdminQueries
 {
     public record GetAdminsQuery() : IRequest<IEnumerable<Admin>>;
 

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoSpace.Application.Commands
+namespace CoSpace.Application.Commands.AdminCommand
 {
     public record AddAdminCommand(Admin Admin) : IRequest<Admin>;
 
@@ -17,7 +17,7 @@ namespace CoSpace.Application.Commands
     {
         public async Task<Admin> Handle(AddAdminCommand request, CancellationToken cancellationToken)
         {
-           return await adminRepository.AddAdmin(request.Admin);
+            return await adminRepository.AddAdmin(request.Admin);
         }
     }
 }

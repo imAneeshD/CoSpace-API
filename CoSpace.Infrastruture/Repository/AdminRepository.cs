@@ -47,10 +47,10 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteAdmin(int Id, Admin admin)
+        public async Task<bool> DeleteAdmin(int Id)
         {
             var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == Id);
-
+                 
             if (existingRecord is not null)
             {
                 existingRecord.IsDeleted = true;
@@ -61,6 +61,14 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-
+        public async Task<Admin> Login(string email, string password)
+        {
+            var result = await dbContext.Admin.FirstOrDefaultAsync(x => x.Email == email && x.Password == password && x.IsDeleted == false);
+            if (result is not null)
+            {
+                return result;
+            }
+            return null;
+        }
     }
 }
