@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CoSpace.Core.Entities
 {
     public class Organization : Base
     {
+        [Key]
         public required string Name { get; set; }
+        [Key]
         public required string Domain { get; set; }
+        [Key]
         public required string PrimaryEmail { get; set; }
         public required string SecondaryEmail { get; set; }
         public required string Phone { get; set; }
