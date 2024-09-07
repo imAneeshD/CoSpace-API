@@ -52,4 +52,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//AddMigrations();
+
 app.Run();
+
+//void AddMigrations()
+//{
+    
+//}

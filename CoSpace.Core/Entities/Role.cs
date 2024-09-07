@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoSpace.Core.Entities
 {
+    [Index("RoleName", IsUnique = true)]
     public class Role : Base
     {
-        [Key]
         public required string RoleName { get; set; }
         public required int OrganizationID { get; set; }
 

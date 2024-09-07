@@ -13,13 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoSpace.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/admin")]
     [ApiController]
+    [Authorize]
     public class AdminController(ISender sender, ITokenService tokenService) : ControllerBase
     {
         private readonly HttpStatusCodes httpStatusCode;
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] AdminLogin request)
         {
             var result = await sender.Send(new AdminLoginQuery(request.Email, request.Password));
@@ -33,8 +35,7 @@ namespace CoSpace.API.Controllers
             return Unauthorized(new { message = "Invalid username or password." });
         }
 
-        [Authorize]
-        [HttpGet("admins")]
+        [HttpGet("")]
         public async Task<IActionResult> GetAdmins()
         {
             var result = await sender.Send(new GetAdminsQuery());
@@ -45,7 +46,6 @@ namespace CoSpace.API.Controllers
             return BadRequest();
         }
 
-        [Authorize]
         [HttpPost("add")]
         public async Task<IActionResult> AddAdminAsync([FromBody] Admin admin)
         {
@@ -57,7 +57,6 @@ namespace CoSpace.API.Controllers
             return BadRequest();
         }
 
-        [Authorize]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateAdminAsync([FromRoute] int id, [FromBody] Admin admin)
         {
@@ -69,7 +68,6 @@ namespace CoSpace.API.Controllers
             return NotFound();
         }
 
-        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> GetAdminById([FromRoute] int id)
         {

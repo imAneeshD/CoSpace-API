@@ -17,8 +17,8 @@ namespace CoSpace.Infrastruture
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                //options.UseSqlServer("Server=SHADOW\\SQLEXPRESS;Database=CoSpace;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
-                options.UseSqlServer("Server=PWSMLRPW364\\SQLEXPRESS;Database=CoSpace;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
+                options.UseSqlServer("Server=SHADOW\\SQLEXPRESS;Database=CoSpace;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
+                //options.UseSqlServer("Server=PWSMLRPW364\\SQLEXPRESS;Database=CoSpace;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
             });
             services.AddScoped<IAdminRepository, AdminRepository>();
             return services;

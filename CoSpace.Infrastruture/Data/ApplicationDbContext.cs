@@ -19,18 +19,6 @@ namespace CoSpace.Infrastruture.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Organization>().HasKey(x =>
-            new {
-                x.PrimaryEmail,
-                x.Domain,
-                x.Name
-            });
-
-            modelBuilder.Entity<Admin>().HasKey(x => 
-            new {
-                x.Username,
-                x.Email
-            });
 
             // Seed default Admin
             modelBuilder.Entity<Admin>().HasData(
