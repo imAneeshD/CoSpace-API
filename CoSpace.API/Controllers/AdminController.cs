@@ -28,7 +28,7 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var token = tokenService.GenerateToken(result.Email);
+                var token = tokenService.GenerateToken(request.Email, "admin");
                 return Ok(new { Token = token });
             }
 
@@ -81,6 +81,8 @@ namespace CoSpace.API.Controllers
             return NotFound(new { message = $"Admin with ID {id} not found." });
 
         }
+
+        
 
     }
 }
