@@ -19,10 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CoSpace.Application\CoSpace.Application.csproj" />
     <ProjectReference Include="..\CoSpace.Infrastruture\CoSpace.Infrastruture.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Response\" />
+    <ProjectReference Include="..\CoSpace.Utility\CoSpace.Utility.csproj" />
   </ItemGroup>
 
 </Project>

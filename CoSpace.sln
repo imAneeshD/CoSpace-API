@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoSpace.API", "CoSpace.API\CoSpace.API.csproj", "{FBDA494F-888A-4472-82EA-17FF4D8A6BAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoSpace.API", "CoSpace.API\CoSpace.API.csproj", "{FBDA494F-888A-4472-82EA-17FF4D8A6BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoSpace.Application", "CoSpace.Application\CoSpace.Application.csproj", "{F8BC7AB6-079E-4C83-8C25-539B160A7828}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoSpace.Application", "CoSpace.Application\CoSpace.Application.csproj", "{F8BC7AB6-079E-4C83-8C25-539B160A7828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoSpace.Core", "CoSpace.Core\CoSpace.Core.csproj", "{5292FD83-8510-4131-B726-423E3DF1CBA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoSpace.Core", "CoSpace.Core\CoSpace.Core.csproj", "{5292FD83-8510-4131-B726-423E3DF1CBA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoSpace.Infrastruture", "CoSpace.Infrastruture\CoSpace.Infrastruture.csproj", "{5B5B57F0-59C7-4FA4-BB0B-DECCA174BA20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoSpace.Infrastruture", "CoSpace.Infrastruture\CoSpace.Infrastruture.csproj", "{5B5B57F0-59C7-4FA4-BB0B-DECCA174BA20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoSpace.Utility", "CoSpace.Utility\CoSpace.Utility.csproj", "{939B925B-2AA7-4E2D-9821-818FA4733EB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{5B5B57F0-59C7-4FA4-BB0B-DECCA174BA20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B5B57F0-59C7-4FA4-BB0B-DECCA174BA20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B5B57F0-59C7-4FA4-BB0B-DECCA174BA20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{939B925B-2AA7-4E2D-9821-818FA4733EB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939B925B-2AA7-4E2D-9821-818FA4733EB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{939B925B-2AA7-4E2D-9821-818FA4733EB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939B925B-2AA7-4E2D-9821-818FA4733EB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

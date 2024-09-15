@@ -1,5 +1,4 @@
-﻿using CoSpace.API.Models.General;
-using CoSpace.API.Models.Request;
+﻿using CoSpace.Utility.Models.Request;
 using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands;
 using CoSpace.Application.Commands.AdminCommand;
@@ -18,7 +17,6 @@ namespace CoSpace.API.Controllers
     [Authorize]
     public class AdminController(ISender sender, ITokenService tokenService) : ControllerBase
     {
-        private readonly HttpStatusCodes httpStatusCode;
 
         [HttpPost("login")]
         [AllowAnonymous]

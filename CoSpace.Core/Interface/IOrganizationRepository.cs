@@ -10,5 +10,6 @@ namespace CoSpace.Core.Interface
     public interface IOrganizationRepository
     {
         Task<Organization> AddOrganization(Organization organization);
+        Task<bool> UpdateOrganization(Organization organization);
     }
 }

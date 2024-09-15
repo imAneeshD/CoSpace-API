@@ -1,4 +1,4 @@
-﻿namespace CoSpace.API.Models.General
+﻿namespace CoSpace.Core.Models.General
 {
     public enum HttpStatusCodes
     {
