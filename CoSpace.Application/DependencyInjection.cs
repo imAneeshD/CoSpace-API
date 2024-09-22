@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,8 +12,12 @@ namespace CoSpace.Application
     {
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
+
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+
+            services.AddAutoMapper(Assembly.GetEntryAssembly());
+
             return services;
         }
     }

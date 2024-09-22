@@ -27,7 +27,7 @@ namespace CoSpace.API.Controllers
             if (result is not null)
             {
                 var token = tokenService.GenerateToken(request.Email, "admin");
-                return Ok(new { Token = token });
+                return Ok(new { Token = token , Data = result});
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
