@@ -21,6 +21,8 @@ namespace CoSpace.Infrastruture
                 //options.UseSqlServer("Server=PWSMLRPW364\\SQLEXPRESS;Database=CoSpace;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
             });
             services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+
             return services;
         }
     }

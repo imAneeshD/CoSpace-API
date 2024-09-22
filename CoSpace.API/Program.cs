@@ -4,6 +4,8 @@ using CoSpace.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CoSpace.Core.Interface;
+using CoSpace.Infrastruture.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<ITokenService, TokenService>();
 
+    
 // Custom DI
 builder.Services.AddAppDI();
 
