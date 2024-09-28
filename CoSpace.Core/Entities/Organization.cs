@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoSpace.Core.Entities
 {
+    [Index("Name", IsUnique =true)]
+    [Index("Domain", IsUnique =true)]
     public class Organization : Base
     {
         public required string Name { get; set; }

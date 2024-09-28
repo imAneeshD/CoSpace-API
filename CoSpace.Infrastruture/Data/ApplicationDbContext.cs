@@ -19,6 +19,7 @@ namespace CoSpace.Infrastruture.Data
         {
             base.OnModelCreating(modelBuilder);
 
+
             // Seed default Admin
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
