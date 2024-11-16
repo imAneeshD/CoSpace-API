@@ -33,7 +33,7 @@ namespace CoSpace.API.Controllers
             return Unauthorized(new { message = "Invalid username or password." });
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> GetAdmins()
         {
             var result = await sender.Send(new GetAdminsQuery());
@@ -44,7 +44,7 @@ namespace CoSpace.API.Controllers
             return BadRequest();
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> AddAdminAsync([FromBody] Admin admin)
         {
             var result = await sender.Send(new AddAdminCommand(admin));
@@ -55,10 +55,10 @@ namespace CoSpace.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateAdminAsync([FromRoute] int id, [FromBody] Admin admin)
+        [HttpPut]
+        public async Task<IActionResult> UpdateAdminAsync([FromBody] Admin admin)
         {
-            var result = await sender.Send(new UpdateAdminCommand(id, admin));
+            var result = await sender.Send(new UpdateAdminCommand(admin));
             if (result)
             {
                 return Ok(result);

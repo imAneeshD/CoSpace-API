@@ -21,7 +21,7 @@ namespace CoSpace.Infrastruture.Repository
         public async Task<bool> UpdateOrganization(Organization organization)
         {
             dbContext.Organization.Update(organization);
-            if(await dbContext.SaveChangesAsync() >0)
+            if(await dbContext.SaveChangesAsync() > 0)
             {
                 return true;
             }

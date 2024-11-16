@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Infrastruture.Repository
 {
-    public class AdminRepository(ApplicationDbContext dbContext) : IAdminRepository
+    public class AdminRepository(ApplicationDbContext dbContext, RepositoryBase<Admin> repositoryBase) : IAdminRepository
     {
         public async Task<IEnumerable<Admin>> GetAdmins()
         {
@@ -24,6 +24,8 @@ namespace CoSpace.Infrastruture.Repository
 
         public async Task<Admin> AddAdmin(Admin admin)
         {
+            repositoryBase.SetAuditFields(admin, 1,"INSERT");
+
             dbContext.Admin.Add(admin);
 
             await dbContext.SaveChangesAsync();
@@ -31,9 +33,9 @@ namespace CoSpace.Infrastruture.Repository
             return admin;
         }
 
-        public async Task<bool> UpdateAdmin(int Id, Admin admin)
+        public async Task<bool> UpdateAdmin(Admin admin)
         {
-            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x=>x.Id == Id);
+            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x=>x.Id == admin.Id);
             
             if (existingRecord is not null)
             {

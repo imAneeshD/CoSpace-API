@@ -14,7 +14,6 @@ namespace CoSpace.API.Controllers
     public class OrganizationController(ISender sender) : ControllerBase
     {
         [HttpPost]
-        [Route("add")]
         public async Task<IActionResult> AddOrganization([FromBody] Organization organization)
         {
             var result = await sender.Send(new AddOrganizationCommand(organization));
@@ -26,7 +25,6 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
         public async Task<IActionResult> UpdateOrganization([FromBody] Organization organization)
         {
             var result = await sender.Send(new UpdateOrganizationCommand(organization));
