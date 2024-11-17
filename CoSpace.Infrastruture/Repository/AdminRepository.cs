@@ -1,6 +1,8 @@
 ﻿using CoSpace.Core.Entities;
 using CoSpace.Core.Interface;
+using CoSpace.Infrastructure.Services;
 using CoSpace.Infrastruture.Data;
+using CoSpace.Infrastruture.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Infrastruture.Repository
 {
-    public class AdminRepository(ApplicationDbContext dbContext, RepositoryBase<Admin> repositoryBase) : IAdminRepository
+    public class AdminRepository(ApplicationDbContext dbContext, RepositoryBase<Admin> repositoryBase, ICurrentUserService currentUserService) : IAdminRepository
     {
         public async Task<IEnumerable<Admin>> GetAdmins()
         {
@@ -24,7 +26,9 @@ namespace CoSpace.Infrastruture.Repository
 
         public async Task<Admin> AddAdmin(Admin admin)
         {
-            repositoryBase.SetAuditFields(admin, 1,"INSERT");
+            var currentUserId = currentUserService.UserId;
+
+            repositoryBase.SetAuditFields(admin, currentUserId, "INSERT");
 
             dbContext.Admin.Add(admin);
 

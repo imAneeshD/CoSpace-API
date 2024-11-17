@@ -26,7 +26,7 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var token = tokenService.GenerateToken(request.Email, "admin");
+                var token = tokenService.GenerateToken(result.Email, "admin", result.Id);
                 return Ok(new { Token = token , Data = result});
             }
 

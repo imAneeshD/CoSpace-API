@@ -14,7 +14,7 @@ namespace CoSpace.Infrastruture.Repository
 
         public void SetAuditFields(T entity, int currentUser, string tranactionType)
         {
-            var currentTime = DateTime.UtcNow;
+            var currentTime = DateTime.Now;
 
 
             if (tranactionType == "INSERT")
