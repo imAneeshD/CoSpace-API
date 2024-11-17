@@ -9,13 +9,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using CoSpace.Core.DTO.Admin;
 
 namespace CoSpace.API.Controllers
 {
     [Route("api/admin")]
     [ApiController]
     [Authorize]
-    public class AdminController(ISender sender, ITokenService tokenService) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -37,16 +39,21 @@ namespace CoSpace.API.Controllers
         public async Task<IActionResult> GetAdmins()
         {
             var result = await sender.Send(new GetAdminsQuery());
-            if (result is not null)
+
+            var adminDtos = mapper.Map<IEnumerable<AdminDTO>>(result);
+
+            if (adminDtos is not null)
             {
-                return Ok(result);
+                return Ok(adminDtos);
             }
             return BadRequest();
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAdminAsync([FromBody] Admin admin)
+        public async Task<IActionResult> AddAdminAsync([FromBody] AdminDTO adminDto)
         {
+            var admin = mapper.Map<Admin>(adminDto);
+
             var result = await sender.Send(new AddAdminCommand(admin));
             if (result is not null)
             {
@@ -67,7 +74,7 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> GetAdminById([FromRoute] int id)
+        public async Task<IActionResult> DeleteAdmin([FromRoute] int id)
         {
             var result = await sender.Send(new DeleteAdminCommand(id));
 

@@ -1,14 +1,8 @@
 ﻿using CoSpace.Core.Entities;
 using CoSpace.Core.Interface;
-using CoSpace.Infrastructure.Services;
 using CoSpace.Infrastruture.Data;
 using CoSpace.Infrastruture.Services.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoSpace.Infrastruture.Repository
 {
@@ -16,7 +10,7 @@ namespace CoSpace.Infrastruture.Repository
     {
         public async Task<IEnumerable<Admin>> GetAdmins()
         {
-            return await dbContext.Admin.ToListAsync(); 
+            return await dbContext.Admin.ToListAsync();
         }
 
         public async Task<Admin> GetAdminById(int id)
@@ -26,37 +20,37 @@ namespace CoSpace.Infrastruture.Repository
 
         public async Task<Admin> AddAdmin(Admin admin)
         {
-            var currentUserId = currentUserService.UserId;
-
-            repositoryBase.SetAuditFields(admin, currentUserId, "INSERT");
+            repositoryBase.SetAuditFields(admin, currentUserService.UserId, "INSERT");
 
             dbContext.Admin.Add(admin);
 
             await dbContext.SaveChangesAsync();
-            
+
             return admin;
         }
 
         public async Task<bool> UpdateAdmin(Admin admin)
         {
-            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x=>x.Id == admin.Id);
-            
+            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == admin.Id);
+
             if (existingRecord is not null)
             {
+                repositoryBase.SetAuditFields(existingRecord, currentUserService.UserId, "UPDATE");
+
                 existingRecord.FirstName = admin.FirstName;
                 existingRecord.LastName = admin.LastName;
                 existingRecord.Email = admin.Email;
-                existingRecord.Password = admin.Password; 
-                
+                existingRecord.Password = admin.Password;
+
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
         }
 
-        public async Task<bool> DeleteAdmin(int Id)
+        public async Task<bool> DeleteAdmin(int id)
         {
-            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == Id);
-                 
+            var existingRecord = await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == id);
+
             if (existingRecord is not null)
             {
                 existingRecord.IsDeleted = true;
