@@ -13,4 +13,9 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTO\Admin\" />
+    <Folder Include="Enums\" />
+  </ItemGroup>
+
 </Project>

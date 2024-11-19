@@ -19,41 +19,37 @@ namespace CoSpace.Infrastruture.Repository
 
         public async Task<bool> UpdateOrganization(Organization organization)
         {
-            var existingRecord = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == organization.Id);
-            if (existingRecord != null)
+            var existingOrganization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == organization.Id);
+            if (existingOrganization != null)
             {
-                repositoryBase.SetAuditFields(existingRecord, currentUserService.UserId, "UPDATE");
+                repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
 
-                existingRecord.Location = organization.Location;
-                existingRecord.Domain = organization.Domain;
-                existingRecord.Name = organization.Name;
-                existingRecord.PrimaryEmail = organization.PrimaryEmail;
-                existingRecord.SecondaryEmail = organization.SecondaryEmail;
+                existingOrganization.Location = organization.Location;
+                existingOrganization.Domain = organization.Domain;
+                existingOrganization.Name = organization.Name;
+                existingOrganization.PrimaryEmail = organization.PrimaryEmail;
+                existingOrganization.SecondaryEmail = organization.SecondaryEmail;
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
-        }
-
-        public async Task<IEnumerable<Organization>> GetOrganizations()
-        {
-            return await dbContext.Organization.ToListAsync();
         }
 
         public async Task<bool> DeleteOrganization(int id)
         {
-            var organization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == id);
+            var existingOrganization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (organization is not null)
+            if (existingOrganization is not null)
             {
-                organization.IsDeleted = true;
+                repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
+
+                existingOrganization.IsDeleted = true;
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
 
             return false;
         }
-
         public async Task<Organization> GetOrganizationById(int id)
         {
             var organization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == id);
@@ -65,5 +61,11 @@ namespace CoSpace.Infrastruture.Repository
 
             return null;
         }
+
+        public async Task<IEnumerable<Organization>> GetOrganizations()
+        {
+            return await dbContext.Organization.ToListAsync();
+        }
+
     }
 }

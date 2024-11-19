@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using CoSpace.Core.DTO.Admin;
+using CoSpace.Core.DTO;
 
 namespace CoSpace.API.Controllers
 {
@@ -28,7 +28,7 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var token = tokenService.GenerateToken(result.Email, "admin", result.Id);
+                var token = tokenService.GenerateToken(result.Email, "admin", result.Id, 0);
                 return Ok(new { Token = token , Data = result});
             }
 

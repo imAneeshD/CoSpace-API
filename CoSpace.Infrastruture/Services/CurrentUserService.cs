@@ -23,6 +23,15 @@ namespace CoSpace.Infrastructure.Services
             }
         }
 
+        public int OrgId
+        {
+            get
+            {
+                var userTypeClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("OrgId")?.Value;
+                return userTypeClaim != null ? int.Parse(userTypeClaim) : 0;
+            }
+        }
+
         public int UserType
         {
             get
