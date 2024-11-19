@@ -15,7 +15,7 @@ namespace CoSpace.API.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, string userType)
+        public string GenerateToken(string email, string userType, int id, int OrgId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
@@ -24,7 +24,9 @@ namespace CoSpace.API.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, userType)
+                    new Claim(ClaimTypes.Role, userType),
+                    new Claim("Id", id.ToString()),
+                    new Claim("OrgId", OrgId.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 Issuer = _configuration["Jwt:Issuer"],

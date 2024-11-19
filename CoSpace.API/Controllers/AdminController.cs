@@ -9,13 +9,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using CoSpace.Core.DTO;
 
 namespace CoSpace.API.Controllers
 {
     [Route("api/admin")]
     [ApiController]
     [Authorize]
-    public class AdminController(ISender sender, ITokenService tokenService) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -26,27 +28,32 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var token = tokenService.GenerateToken(request.Email, "admin");
+                var token = tokenService.GenerateToken(result.Email, "admin", result.Id, 0);
                 return Ok(new { Token = token , Data = result});
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> GetAdmins()
         {
             var result = await sender.Send(new GetAdminsQuery());
-            if (result is not null)
+
+            var adminDtos = mapper.Map<IEnumerable<AdminDTO>>(result);
+
+            if (adminDtos is not null)
             {
-                return Ok(result);
+                return Ok(adminDtos);
             }
             return BadRequest();
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddAdminAsync([FromBody] Admin admin)
+        [HttpPost]
+        public async Task<IActionResult> AddAdminAsync([FromBody] AdminDTO adminDto)
         {
+            var admin = mapper.Map<Admin>(adminDto);
+
             var result = await sender.Send(new AddAdminCommand(admin));
             if (result is not null)
             {
@@ -55,10 +62,10 @@ namespace CoSpace.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateAdminAsync([FromRoute] int id, [FromBody] Admin admin)
+        [HttpPut]
+        public async Task<IActionResult> UpdateAdminAsync([FromBody] Admin admin)
         {
-            var result = await sender.Send(new UpdateAdminCommand(id, admin));
+            var result = await sender.Send(new UpdateAdminCommand(admin));
             if (result)
             {
                 return Ok(result);
@@ -67,7 +74,7 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> GetAdminById([FromRoute] int id)
+        public async Task<IActionResult> DeleteAdmin([FromRoute] int id)
         {
             var result = await sender.Send(new DeleteAdminCommand(id));
 

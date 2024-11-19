@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoSpace.Core.DTO.Admin
+namespace CoSpace.Core.DTO
 {
     public class AdminDTO
     {

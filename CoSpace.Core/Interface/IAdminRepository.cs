@@ -12,7 +12,7 @@ namespace CoSpace.Core.Interface
         Task<IEnumerable<Admin>> GetAdmins();
         Task<Admin> GetAdminById(int id);
         Task<Admin> AddAdmin(Admin admin);
-        Task<bool> UpdateAdmin(int Id, Admin admin);
+        Task<bool> UpdateAdmin(Admin admin);
         Task<bool> DeleteAdmin(int Id);
         Task<Admin> Login(string email, string password);
     }

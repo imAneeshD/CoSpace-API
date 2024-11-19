@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoSpace.Core.DTO.Admin;
+using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
 
 
@@ -9,7 +9,9 @@ namespace CoSpace.Application.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<AdminDTO, Admin>();
+            CreateMap<Admin, AdminDTO>().ReverseMap();
+            CreateMap<OrganizationDTO, Organization>().ReverseMap();
+            CreateMap<RoleDTO, Role>().ReverseMap();
         }
     }
 }
