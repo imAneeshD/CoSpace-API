@@ -361,4 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
 /CoSpace.Infrastruture/Migrations/
+/CoSpace.Infrastruture/Migrations/ApplicationDbContextModelSnapshot.cs

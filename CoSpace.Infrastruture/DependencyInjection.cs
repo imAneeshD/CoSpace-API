@@ -1,26 +1,40 @@
 ﻿using CoSpace.Core.Interface;
+using CoSpace.Core.Options;
+using CoSpace.Infrastructure.Services;
 using CoSpace.Infrastruture.Data;
 using CoSpace.Infrastruture.Repository;
+using CoSpace.Infrastruture.Services.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+
 
 namespace CoSpace.Infrastruture
 {
+
     public static class DependencyInjection
     {
         public static IServiceCollection AddInfrastructureDI(this IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            // Register DbContext
+            services.AddDbContext<ApplicationDbContext>((provider, options) =>
             {
-                options.UseSqlServer("Server=SHADOW\\SQLEXPRESS;Database=CoSpace;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
+                options.UseSqlServer(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.Local);
             });
+
+            // Register repositories
             services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+
+            services.AddScoped(typeof(RepositoryBase<>), typeof(RepositoryBase<>));
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
             return services;
         }
     }
+
 }

@@ -1,4 +1,4 @@
-﻿namespace CoSpace.API.Models.Request
+﻿namespace CoSpace.Utility.Models.Request
 {
     public class AdminLogin
     {

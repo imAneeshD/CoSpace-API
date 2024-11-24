@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Application.Commands.AdminCommand
 {
-    public record UpdateAdminCommand(int Id, Admin Admin) : IRequest<bool>;
+    public record UpdateAdminCommand(Admin Admin) : IRequest<bool>;
 
     public class UpdateAdminCommandHandler(IAdminRepository adminRepository)
         : IRequestHandler<UpdateAdminCommand, bool>
     {
         public async Task<bool> Handle(UpdateAdminCommand request, CancellationToken cancellationToken)
         {
-            return await adminRepository.UpdateAdmin(request.Id, request.Admin);
+            return await adminRepository.UpdateAdmin(request.Admin);
         }
     }
 }

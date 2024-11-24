@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CoSpace.Core.Entities
+namespace CoSpace.Core.DTO
 {
-    [Index("Name", IsUnique =true)]
-    [Index("Domain", IsUnique =true)]
-    public class Organization : Base
+    public class OrganizationDTO
     {
         public required string Name { get; set; }
         public required string Domain { get; set; }
@@ -13,6 +14,5 @@ namespace CoSpace.Core.Entities
         public required string SecondaryEmail { get; set; }
         public required string Phone { get; set; }
         public required string Location { get; set; }
-
     }
 }
