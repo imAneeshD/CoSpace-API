@@ -15,6 +15,7 @@ namespace CoSpace.Infrastruture.Data
         public DbSet<Role> Role { get; set; }
         public DbSet<UserType> UserType { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<RefreshToken> RefreshToken { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

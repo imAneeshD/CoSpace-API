@@ -15,7 +15,7 @@ namespace CoSpace.API.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, string userType, int id, int OrgId)
+        public string GenerateAccessToken(string email, string userType, int id, int OrgId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
@@ -36,6 +36,11 @@ namespace CoSpace.API.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
     }
 

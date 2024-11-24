@@ -11,14 +11,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using CoSpace.Core.DTO;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace CoSpace.API.Controllers
 {
     [Route("api/admin")]
     [ApiController]
     [Authorize]
-    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper) : ControllerBase
+    public class AdminController(IMemoryCache cache, ISender sender, ITokenService tokenService, IMapper mapper) : ControllerBase
     {
+        private static HashSet<string> RevokedTokens = new HashSet<string>();
 
         [HttpPost("login")]
         [AllowAnonymous]
@@ -28,11 +32,30 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var token = tokenService.GenerateToken(result.Email, "admin", result.Id, 0);
+                var token = tokenService.GenerateAccessToken(result.Email, "admin", result.Id, 0);
+                
                 return Ok(new { Token = token , Data = result});
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout([FromBody] LogoutRequest request)
+        {
+            var refreshToken = await sender.Send(new GetRefreshTokenQuery(admin));
+
+            if (refreshToken == null || refreshToken.IsRevoked)
+            {
+                return BadRequest("Invalid token");
+            }
+
+            refreshToken.IsRevoked = true;
+            refreshToken.Revoked = DateTime.UtcNow;
+
+            _context.SaveChanges();
+
+            return Ok(new { message = "Successfully logged out" });
         }
 
         [HttpGet]
@@ -86,8 +109,5 @@ namespace CoSpace.API.Controllers
             return NotFound(new { message = $"Admin with ID {id} not found." });
 
         }
-
-        
-
     }
 }
