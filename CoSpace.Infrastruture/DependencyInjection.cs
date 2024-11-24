@@ -21,7 +21,7 @@ namespace CoSpace.Infrastruture
             // Register DbContext
             services.AddDbContext<ApplicationDbContext>((provider, options) =>
             {
-                options.UseSqlServer(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.Prod);
+                options.UseSqlServer(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.Local);
             });
 
             // Register repositories
