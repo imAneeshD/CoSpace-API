@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoSpace.Core.Entities
+namespace CoSpace.Core.DTO
 {
-    [Index("Username", IsUnique =true)]
-    public class User : Base
+    public class UserDTO
     {
         public required string Username {  get; set; }
         public required string FirstName {  get; set; }
@@ -19,11 +18,5 @@ namespace CoSpace.Core.Entities
         public required int AppUserTypeId {  get; set; }
         public required int RoleId {  get; set; }
         public required int OrganizationId {  get; set; }
-        public required int OrganizationUserTypeId {  get; set; }
-
-        public virtual Organization Organization { get; set; }
-        public virtual AppUserType AppUserType { get; set; }
-        public virtual Role Role { get; set; }
-        public virtual OrganizationUserType OrganizationUserType { get; set; }
     }
 }

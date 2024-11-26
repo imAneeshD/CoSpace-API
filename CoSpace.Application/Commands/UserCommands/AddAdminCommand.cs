@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Application.Commands.AdminCommand
 {
-    public record AddAdminCommand(Admin Admin) : IRequest<Admin>;
+    public record AddAdminCommand(User Admin) : IRequest<User>;
 
-    public class AddAdminCommandHandler(IAdminRepository adminRepository)
-        : IRequestHandler<AddAdminCommand, Admin>
+    public class AddAdminCommandHandler(IUserRepository adminRepository)
+        : IRequestHandler<AddAdminCommand, User>
     {
 
-        public async Task<Admin> Handle(AddAdminCommand request, CancellationToken cancellationToken)
+        public async Task<User> Handle(AddAdminCommand request, CancellationToken cancellationToken)
         {
 
             return await adminRepository.AddAdmin(request.Admin);

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Application.Queries.RefreshTokenQueries
 {
-    public record GetRefreshTokenQuery(LogoutRequest logoutRequest): IRequest<RefreshToken>;
+    public record GetRefreshTokenQuery(string refreshToken): IRequest<RefreshToken>;
 
     public class GetGetRefreshTokenQueryHandler(IRefreshTokenRepository refreshTokenRepository)
         : IRequestHandler<GetRefreshTokenQuery, RefreshToken>
     {
         public async Task<RefreshToken> Handle(GetRefreshTokenQuery request, CancellationToken cancellationToken)
         {
-            return await refreshTokenRepository.GetRefreshTokenAsync(request.logoutRequest);   
+            return await refreshTokenRepository.GetRefreshTokenAsync(request.refreshToken);   
         }
     }
 }

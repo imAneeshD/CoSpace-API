@@ -14,13 +14,19 @@ using CoSpace.Core.DTO;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
+using CoSpace.Application.Queries.RefreshTokenQueries;
+using Azure.Core;
+using CoSpace.Application.Commands.RefreshTokenCommands;
+using CoSpace.Utility.Models.Response;
+using CoSpace.API.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CoSpace.API.Controllers
 {
     [Route("api/admin")]
     [ApiController]
     [Authorize]
-    public class AdminController(IMemoryCache cache, ISender sender, ITokenService tokenService, IMapper mapper) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse) : ControllerBase
     {
         private static HashSet<string> RevokedTokens = new HashSet<string>();
 
@@ -32,18 +38,31 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var token = tokenService.GenerateAccessToken(result.Email, "admin", result.Id, 0);
-                
-                return Ok(new { Token = token , Data = result});
+                var accessToken = tokenService.GenerateAccessToken(result.Email, 0, result.Id, 0, 1);
+                var refreshToken = tokenService.GenerateRefreshToken();
+
+                await tokenService.SaveRefreshToken(result.Id, refreshToken, 1);
+
+                apiResponse.Success = true;
+                apiResponse.Data = new
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    Data = result
+                };
+                return Ok(apiResponse);
             }
 
             return Unauthorized(new { message = "Invalid username or password." });
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout([FromBody] LogoutRequest request)
+        public async Task<IActionResult> Logout()
         {
-            var refreshToken = await sender.Send(new GetRefreshTokenQuery(admin));
+
+            Request.Headers.TryGetValue("RefreshToken", out var token);
+
+            var refreshToken = await sender.Send(new GetRefreshTokenQuery(token.ToString()));
 
             if (refreshToken == null || refreshToken.IsRevoked)
             {
@@ -51,11 +70,39 @@ namespace CoSpace.API.Controllers
             }
 
             refreshToken.IsRevoked = true;
-            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.Revoked = DateTime.Now;
 
-            _context.SaveChanges();
+            await sender.Send(new DeleteRefreshTokenCommand());
 
-            return Ok(new { message = "Successfully logged out" });
+            apiResponse.Success = true;
+            apiResponse.Message = "Successfully logged out.";
+
+            return Ok(apiResponse);
+        }
+
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            if (!Request.Headers.TryGetValue("RefreshToken", out var authorizationHeader))
+            {
+                return Unauthorized("RefreshToken header missing.");
+            }
+
+            var refreshToken = authorizationHeader.ToString();
+
+            try
+            {
+                var newAccessToken = await tokenService.RefreshAccessToken(refreshToken);
+                return Ok(new
+                {
+                    AccessToken = newAccessToken
+                });
+            }
+            catch (SecurityTokenException)
+            {
+                return Unauthorized("Invalid or expired refresh token.");
+            }
         }
 
         [HttpGet]
@@ -67,7 +114,11 @@ namespace CoSpace.API.Controllers
 
             if (adminDtos is not null)
             {
-                return Ok(adminDtos);
+
+                apiResponse.Success = true;
+                apiResponse.Data = adminDtos;
+
+                return Ok(apiResponse);
             }
             return BadRequest();
         }
@@ -75,23 +126,28 @@ namespace CoSpace.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAdminAsync([FromBody] AdminDTO adminDto)
         {
-            var admin = mapper.Map<Admin>(adminDto);
+            var admin = mapper.Map<User>(adminDto);
 
             var result = await sender.Send(new AddAdminCommand(admin));
             if (result is not null)
             {
+                apiResponse.Success = true;
+                apiResponse.Data = result;
+
                 return Ok(result);
             }
             return BadRequest();
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAdminAsync([FromBody] Admin admin)
+        public async Task<IActionResult> UpdateAdminAsync([FromBody] User admin)
         {
             var result = await sender.Send(new UpdateAdminCommand(admin));
             if (result)
             {
-                return Ok(result);
+                apiResponse.Success = true;
+                apiResponse.Data = result;
+                return Ok(apiResponse);
             }
             return NotFound();
         }
@@ -103,11 +159,11 @@ namespace CoSpace.API.Controllers
 
             if(result)
             {
-                return Ok(result);
+                apiResponse.Success = true;
+                apiResponse.Data = result;
+                return Ok(apiResponse);
             }
-
-            return NotFound(new { message = $"Admin with ID {id} not found." });
-
+            return NotFound(apiResponse);
         }
     }
 }

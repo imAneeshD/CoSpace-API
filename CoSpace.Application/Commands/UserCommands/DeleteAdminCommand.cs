@@ -11,7 +11,7 @@ namespace CoSpace.Application.Commands.AdminCommand
 {
     public record DeleteAdminCommand(int Id) : IRequest<bool>;
 
-    public class DeleteAdminCommandHandler(IAdminRepository adminRepository)
+    public class DeleteAdminCommandHandler(IUserRepository adminRepository)
         : IRequestHandler<DeleteAdminCommand, bool>
     {
         public async Task<bool> Handle(DeleteAdminCommand request, CancellationToken cancellationToken)

@@ -40,5 +40,14 @@ namespace CoSpace.Infrastructure.Services
                 return userTypeClaim != null ? int.Parse(userTypeClaim) : 0;
             }
         }
+
+        public int AppUserTypeId
+        {
+            get
+            {
+                var userTypeClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("AppUserTypeId")?.Value;
+                return userTypeClaim != null ? int.Parse(userTypeClaim) : 0;
+            }
+        }
     }
 }

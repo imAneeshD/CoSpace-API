@@ -9,6 +9,9 @@ namespace CoSpace.Core.Interface
 {
     public interface IRefreshTokenRepository
     {
-        Task<RefreshToken> GetRefreshTokenAsync(Entities.LogoutRequest logoutRequest);
+        Task<RefreshToken> AddRefreshToken(RefreshToken refreshToken);
+        Task<RefreshToken> GetRefreshTokenAsync(string refreshToken);
+        Task<RefreshToken> UpdateRefreshToken(RefreshToken refreshToken);
+        Task<bool> DeleteRefreshToken();
     }
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Application.Commands.AdminCommand
 {
-    public record UpdateAdminCommand(Admin Admin) : IRequest<bool>;
+    public record UpdateAdminCommand(User Admin) : IRequest<bool>;
 
-    public class UpdateAdminCommandHandler(IAdminRepository adminRepository)
+    public class UpdateAdminCommandHandler(IUserRepository adminRepository)
         : IRequestHandler<UpdateAdminCommand, bool>
     {
         public async Task<bool> Handle(UpdateAdminCommand request, CancellationToken cancellationToken)

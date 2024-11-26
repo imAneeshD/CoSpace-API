@@ -9,7 +9,7 @@ namespace CoSpace.Application.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<Admin, AdminDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<OrganizationDTO, Organization>().ReverseMap();
             CreateMap<RoleDTO, Role>().ReverseMap();
         }
