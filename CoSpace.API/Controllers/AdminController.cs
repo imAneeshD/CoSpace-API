@@ -38,10 +38,10 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var accessToken = tokenService.GenerateAccessToken(result.Email, 0, result.Id, 0, 1);
+                var accessToken = tokenService.GenerateAccessToken(result.Email, result.IsAppAdmin, result.Id, result.OrganizationId, result.RoleId);
                 var refreshToken = tokenService.GenerateRefreshToken();
 
-                await tokenService.SaveRefreshToken(result.Id, refreshToken, 1);
+                await tokenService.SaveRefreshToken(result.Id, refreshToken);
 
                 apiResponse.Success = true;
                 apiResponse.Data = new

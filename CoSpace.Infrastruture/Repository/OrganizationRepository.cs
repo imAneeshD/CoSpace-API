@@ -6,12 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoSpace.Infrastruture.Repository
 {
-    public class OrganizationRepository(ApplicationDbContext dbContext, RepositoryBase<Organization> repositoryBase, ICurrentUserService currentUserService) : IOrganizationRepository
+    public class OrganizationRepository(ApplicationDbContext dbContext, ICurrentUserService currentUserService) : IOrganizationRepository
     {
         public async Task<Organization> AddOrganization(Organization organization)
         {
-            repositoryBase.SetAuditFields(organization, currentUserService.UserId, "INSERT");
-
+            //repositoryBase.SetAuditFields(organization, currentUserService.UserId, "INSERT");
+            organization.UpdatedBy = currentUserService.UserId;
+            organization.UpdatedDate = DateTime.Now;
+            organization.CreatedBy = currentUserService.UserId;
+            organization.CreatedDate = DateTime.Now;
             dbContext.Organization.Add(organization);
             await dbContext.SaveChangesAsync();
             return organization;
@@ -22,13 +25,15 @@ namespace CoSpace.Infrastruture.Repository
             var existingOrganization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == organization.Id);
             if (existingOrganization != null)
             {
-                repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
+                //repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
 
                 existingOrganization.Location = organization.Location;
                 existingOrganization.Domain = organization.Domain;
                 existingOrganization.Name = organization.Name;
                 existingOrganization.PrimaryEmail = organization.PrimaryEmail;
                 existingOrganization.SecondaryEmail = organization.SecondaryEmail;
+                existingOrganization.UpdatedBy = currentUserService.UserId;
+                existingOrganization.UpdatedDate = DateTime.Now;
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
@@ -41,7 +46,9 @@ namespace CoSpace.Infrastruture.Repository
 
             if (existingOrganization is not null)
             {
-                repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
+                //repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
+                existingOrganization.UpdatedBy = currentUserService.UserId;
+                existingOrganization.UpdatedDate = DateTime.Now;
 
                 existingOrganization.IsDeleted = true;
 

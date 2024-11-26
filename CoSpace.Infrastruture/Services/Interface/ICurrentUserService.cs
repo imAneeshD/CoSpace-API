@@ -10,7 +10,7 @@ namespace CoSpace.Infrastruture.Services.Interface
     {
         int UserId { get; }
         int OrgId { get; }
-        int UserType { get; }
-        int AppUserTypeId { get; }
+        int AppAdmin { get; }
+        int Role { get; }
     }
 }

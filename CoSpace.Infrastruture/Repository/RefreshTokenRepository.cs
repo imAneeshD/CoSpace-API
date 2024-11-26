@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CoSpace.Infrastruture.Repository
 {
-    public class RefreshTokenRepository(ApplicationDbContext dbContext, RepositoryBase<Role> repositoryBase, ICurrentUserService currentUserService) : IRefreshTokenRepository
+    public class RefreshTokenRepository(ApplicationDbContext dbContext, RepositoryBase<UserRole> repositoryBase, ICurrentUserService currentUserService) : IRefreshTokenRepository
     {
 
         public async Task<RefreshToken> GetRefreshTokenAsync(string refreshToken)
@@ -50,7 +50,7 @@ namespace CoSpace.Infrastruture.Repository
             {
                 
                 var refreshTokens = await dbContext.RefreshToken
-                    .Where(rt => rt.UserId == currentUserService.UserId && rt.AppUserTypeId == currentUserService.AppUserTypeId)
+                    .Where(rt => rt.UserId == currentUserService.UserId )
                     .ToListAsync();
 
                 if (refreshTokens == null || !refreshTokens.Any())

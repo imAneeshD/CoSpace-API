@@ -16,7 +16,7 @@ namespace CoSpace.Application.Commands.AdminCommand
     {
         public async Task<bool> Handle(UpdateAdminCommand request, CancellationToken cancellationToken)
         {
-            return await adminRepository.UpdateAdmin(request.Admin);
+            return await adminRepository.UpdateUser(request.Admin);
         }
     }
 }

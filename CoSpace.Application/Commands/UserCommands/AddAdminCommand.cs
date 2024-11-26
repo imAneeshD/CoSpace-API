@@ -19,7 +19,7 @@ namespace CoSpace.Application.Commands.AdminCommand
         public async Task<User> Handle(AddAdminCommand request, CancellationToken cancellationToken)
         {
 
-            return await adminRepository.AddAdmin(request.Admin);
+            return await adminRepository.AddUser(request.Admin);
         }
     }
 }

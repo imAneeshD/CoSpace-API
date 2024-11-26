@@ -16,7 +16,7 @@ namespace CoSpace.Application.Commands.AdminCommand
     {
         public async Task<bool> Handle(DeleteAdminCommand request, CancellationToken cancellationToken)
         {
-            return await adminRepository.DeleteAdmin(request.Id);
+            return await adminRepository.DeleteUser(request.Id);
         }
     }
 }

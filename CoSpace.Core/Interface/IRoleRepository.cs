@@ -9,10 +9,10 @@ namespace CoSpace.Core.Interface
 {
     public interface IRoleRepository
     {
-        Task<Role> AddRole(Role role);
-        Task<bool> UpdateRole(Role role);
+        Task<UserRole> AddRole(UserRole role);
+        Task<bool> UpdateRole(UserRole role);
         Task<bool> DeleteRole(int id);
-        Task<Role> GetRole(int id);
-        Task<IEnumerable<Role>> GetRoles();
+        Task<UserRole> GetRole(int id);
+        Task<IEnumerable<UserRole>> GetRoles();
     }
 }

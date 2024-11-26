@@ -5,10 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CoSpace.Core.Entities
 {
     [Index("Name", IsUnique = true)]
-    public class Role : Base
+    public class UserRole : Base
     {
         public required string Name { get; set; }
-
-        public virtual Organization Organization { get; set; }  
     }
 }

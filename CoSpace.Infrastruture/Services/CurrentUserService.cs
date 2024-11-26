@@ -32,7 +32,7 @@ namespace CoSpace.Infrastructure.Services
             }
         }
 
-        public int UserType
+        public int Role
         {
             get
             {
@@ -41,7 +41,7 @@ namespace CoSpace.Infrastructure.Services
             }
         }
 
-        public int AppUserTypeId
+        public int AppAdmin
         {
             get
             {

@@ -15,8 +15,5 @@ namespace CoSpace.Core.Entities
         public bool IsRevoked { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Revoked { get; set; }
-
-        public required int AppUserTypeId { get; set; }
-        public virtual AppUserType AppUserType { get; set; }
     }
 }

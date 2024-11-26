@@ -18,12 +18,8 @@ namespace CoSpace.Core.Entities
         public required string Password {  get; set; }
         public required int AppUserTypeId {  get; set; }
         public required int RoleId {  get; set; }
-        public required int OrganizationId {  get; set; }
-        public required int OrganizationUserTypeId {  get; set; }
+        public required bool IsAppAdmin {  get; set; }
 
-        public virtual Organization Organization { get; set; }
-        public virtual AppUserType AppUserType { get; set; }
-        public virtual Role Role { get; set; }
-        public virtual OrganizationUserType OrganizationUserType { get; set; }
+        public virtual UserRole Role { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace CoSpace.Application.Mapper
         {
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<OrganizationDTO, Organization>().ReverseMap();
-            CreateMap<RoleDTO, Role>().ReverseMap();
+            CreateMap<RoleDTO, UserRole>().ReverseMap();
         }
     }
 }

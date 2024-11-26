@@ -16,7 +16,7 @@ namespace CoSpace.API.Services
     public class TokenService(ISender sender, IConfiguration configuration) : ITokenService
     {
 
-        public string GenerateAccessToken(string email, int organizationUserTypeId, int id, int OrgId, int appUserTypeId)
+        public string GenerateAccessToken(string email, bool isAppAdmin, int id, int OrgId, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["Jwt:SecretKey"]);
@@ -25,10 +25,10 @@ namespace CoSpace.API.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, email),
-                    new Claim("OrganizationUserTypeId", organizationUserTypeId.ToString()),
+                    new Claim("AppAdmin", isAppAdmin.ToString()),
                     new Claim("Id", id.ToString()),
                     new Claim("OrgId", OrgId.ToString()),
-                    new Claim("AppUserTypeId", appUserTypeId.ToString()),
+                    new Claim(ClaimTypes.Role, roleId.ToString()),
                 }),
                 Expires = DateTime.Now.AddHours(1),
                 Issuer = configuration["Jwt:Issuer"],
@@ -45,13 +45,12 @@ namespace CoSpace.API.Services
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
 
-        public async Task SaveRefreshToken(int userId, string refreshToken, int appUserTypeId)
+        public async Task SaveRefreshToken(int userId, string refreshToken)
         {
             var token = new RefreshToken
             {
                 UserId = userId,
                 Token = refreshToken,
-                AppUserTypeId = appUserTypeId,
                 Expires = DateTime.Now.AddDays(7),
                 Created = DateTime.Now
             };
@@ -71,7 +70,7 @@ namespace CoSpace.API.Services
 
             var user = await sender.Send(new GetUsersByIdQuery(existingRefreshToken.UserId));
 
-            var newAccessToken = GenerateAccessToken(user.Email, user.OrganizationUserTypeId, user.Id, user.OrganizationId, user.AppUserTypeId);
+            var newAccessToken = GenerateAccessToken(user.Email, user.IsAppAdmin, user.Id, user.OrganizationId, user.AppUserTypeId);
             return newAccessToken;
         }
     }

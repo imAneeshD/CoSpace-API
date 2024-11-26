@@ -16,7 +16,7 @@ namespace CoSpace.Application.Queries.AdminQueries
     {
         public async Task<IEnumerable<User>> Handle(GetAdminsQuery request, CancellationToken cancellationToken)
         {
-            return await adminRepository.GetAdmins();
+            return await adminRepository.GetUsers();
         }
     }
 }
