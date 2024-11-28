@@ -15,10 +15,9 @@ namespace CoSpace.Core.Entities
         public required string FirstName {  get; set; }
         public string LastName { get; set; } = null!;
         public required string Email {  get; set; }
+        public required string Phone {  get; set; }
         public required string Password {  get; set; }
-        public required int AppUserTypeId {  get; set; }
         public required int RoleId {  get; set; }
-        public required bool IsAppAdmin {  get; set; }
 
         public virtual UserRole Role { get; set; }
     }

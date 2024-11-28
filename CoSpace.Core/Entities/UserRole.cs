@@ -8,5 +8,6 @@ namespace CoSpace.Core.Entities
     public class UserRole : Base
     {
         public required string Name { get; set; }
+        public required string Description { get; set; }
     }
 }
