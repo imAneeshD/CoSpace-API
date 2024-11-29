@@ -18,7 +18,7 @@ namespace CoSpace.API.Controllers
     [Route("api/user")]
     [ApiController]
     [Authorize]
-    public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse) : ControllerBase
+    public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
         private static HashSet<string> RevokedTokens = new HashSet<string>();
 
@@ -31,9 +31,9 @@ namespace CoSpace.API.Controllers
             if (result is not null)
             {
                 var accessToken = tokenService.GenerateAccessToken(result.Email, result.Id, result.OrganizationId, result.RoleId);
-                var refreshToken = tokenService.GenerateRefreshToken();
+                var refreshToken = refreshTokenService.GenerateRefreshToken();
 
-                await tokenService.SaveRefreshToken(result.Id, refreshToken);
+                await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id);
 
                 apiResponse.Success = true;
                 apiResponse.Data = new
@@ -54,7 +54,7 @@ namespace CoSpace.API.Controllers
 
             Request.Headers.TryGetValue("RefreshToken", out var token);
 
-            var refreshToken = await sender.Send(new GetRefreshTokenQuery(token.ToString()));
+            var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
 
             if (refreshToken == null || refreshToken.IsRevoked)
             {
@@ -64,7 +64,7 @@ namespace CoSpace.API.Controllers
             refreshToken.IsRevoked = true;
             refreshToken.Revoked = DateTime.Now;
 
-            await sender.Send(new DeleteRefreshTokenCommand());
+            await refreshTokenService.DeleteRefreshToken();
 
             apiResponse.Success = true;
             apiResponse.Message = "Successfully logged out.";
@@ -85,7 +85,7 @@ namespace CoSpace.API.Controllers
 
             try
             {
-                var newAccessToken = await tokenService.RefreshAccessToken(refreshToken, "user");
+                var newAccessToken = await refreshTokenService.RefreshAccessToken(refreshToken, "user");
                 return Ok(new
                 {
                     AccessToken = newAccessToken

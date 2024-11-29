@@ -18,9 +18,8 @@ namespace CoSpace.API.Controllers
     [Route("api/Admin")]
     [ApiController]
     [Authorize]
-    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
-        private static HashSet<string> RevokedTokens = new HashSet<string>();
 
         [HttpPost("login")]
         [AllowAnonymous]
@@ -30,17 +29,19 @@ namespace CoSpace.API.Controllers
 
             if (result is not null)
             {
-                var accessToken = tokenService.GenerateAccessToken(result.Email, result.Id, result.OrganizationId, result.RoleId);
-                var refreshToken = tokenService.GenerateRefreshToken();
+                var adminDto = mapper.Map<AdminDTO>(result);
 
-                await tokenService.SaveRefreshToken(result.Id, refreshToken);
+                var accessToken = tokenService.GenerateAccessToken(result.Email, result.Id, result.OrganizationId, result.RoleId);
+                var refreshToken = refreshTokenService.GenerateRefreshToken();
+
+                await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id);
 
                 apiResponse.Success = true;
                 apiResponse.Data = new
                 {
                     AccessToken = accessToken,
                     RefreshToken = refreshToken,
-                    Data = result
+                    Data = adminDto
                 };
                 return Ok(apiResponse);
             }
@@ -54,7 +55,7 @@ namespace CoSpace.API.Controllers
 
             Request.Headers.TryGetValue("RefreshToken", out var token);
 
-            var refreshToken = await sender.Send(new GetRefreshTokenQuery(token.ToString()));
+            var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
 
             if (refreshToken == null || refreshToken.IsRevoked)
             {
@@ -64,7 +65,7 @@ namespace CoSpace.API.Controllers
             refreshToken.IsRevoked = true;
             refreshToken.Revoked = DateTime.Now;
 
-            await sender.Send(new DeleteRefreshTokenCommand());
+            await refreshTokenService.DeleteRefreshToken();
 
             apiResponse.Success = true;
             apiResponse.Message = "Successfully logged out.";
@@ -85,7 +86,7 @@ namespace CoSpace.API.Controllers
 
             try
             {
-                var newAccessToken = await tokenService.RefreshAccessToken(refreshToken, "admin");
+                var newAccessToken = await refreshTokenService.RefreshAccessToken(refreshToken, "admin");
                 return Ok(new
                 {
                     AccessToken = newAccessToken
@@ -106,7 +107,6 @@ namespace CoSpace.API.Controllers
 
             if (AdminDtos is not null)
             {
-
                 apiResponse.Success = true;
                 apiResponse.Data = AdminDtos;
 
