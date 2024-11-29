@@ -12,10 +12,10 @@ namespace CoSpace.Infrastruture.Data
         public DbSet<RefreshToken> RefreshToken { get; set; }
         public DbSet<Booking> Booking { get; set; }
         public DbSet<Room> Room { get; set; }
-        public DbSet<Notification> Notification { get; set; }
+        public DbSet<NotificationDTO> Notification { get; set; }
         public DbSet<HelpRequest> HelpRequest { get; set; }
-        public DbSet<Complaint> Complaint { get; set; }
-        public DbSet<CanteenMenu> CanteenMenu { get; set; }
+        public DbSet<ComplaintDTO> Complaint { get; set; }
+        public DbSet<CanteenMenuDTO> CanteenMenu { get; set; }
         public DbSet<Admin> Admin { get; set; }
 
 
@@ -23,7 +23,7 @@ namespace CoSpace.Infrastruture.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<CanteenMenu>()
+            modelBuilder.Entity<CanteenMenuDTO>()
               .Property(c => c.Price)
               .HasPrecision(18, 2);
 
@@ -107,13 +107,13 @@ namespace CoSpace.Infrastruture.Data
                {
                    Id = 1,
                    Username = "super_admin",
-                   FirstName ="Aneesh",
-                   LastName ="Dembala",
-                   Email ="aneeshd70@gmail.com",
+                   FirstName = "Aneesh",
+                   LastName = "Dembala",
+                   Email = "aneeshd70@gmail.com",
                    Phone = "6360405023",
                    Password = "aneesha",
                    RoleId = 1,
-                   OrganizationId =1,
+                   OrganizationId = 1,
                    CreatedBy = 0,
                    CreatedDate = DateTime.Now,
                    UpdatedBy = 0,

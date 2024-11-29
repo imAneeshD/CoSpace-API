@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace CoSpace.Core.Entities
 {
-    [Index("Name", IsUnique =true)]
-    [Index("Domain", IsUnique =true)]
-    public class Organization 
+    [Index("Name", IsUnique = true)]
+    [Index("Domain", IsUnique = true)]
+    public class Organization
     {
         public int Id { get; set; }
         public required string Name { get; set; }

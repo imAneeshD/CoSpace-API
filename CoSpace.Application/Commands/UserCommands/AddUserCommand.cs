@@ -1,22 +1,16 @@
-﻿using AutoMapper;
-using CoSpace.Core.Entities;
+﻿using CoSpace.Core.Entities;
 using CoSpace.Core.Interface;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CoSpace.Application.Commands.UsersCommand
+namespace CoSpace.Application.Commands.UserCommands
 {
-    public record AddUsersCommand(User Users) : IRequest<User>;
+    public record AddUserCommand(User Users) : IRequest<User>;
 
     public class AddUsersCommandHandler(IUserRepository UsersRepository)
-        : IRequestHandler<AddUsersCommand, User>
+        : IRequestHandler<AddUserCommand, User>
     {
 
-        public async Task<User> Handle(AddUsersCommand request, CancellationToken cancellationToken)
+        public async Task<User> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
 
             return await UsersRepository.AddUser(request.Users);

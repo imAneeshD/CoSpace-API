@@ -1,4 +1,6 @@
-﻿namespace CoSpace.Core.Entities
+﻿using CoSpace.Core.Entities;
+
+namespace CoSpace.Core.DTO
 {
     public class CanteenMenuDTO : Base
     {

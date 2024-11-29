@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CoSpace.API.Services.Interface;
+using CoSpace.Application.Commands.AdminCommands;
 using CoSpace.Application.Commands.RefreshTokenCommands;
-using CoSpace.Application.Commands.UserCommands;
+using CoSpace.Application.Queries.AdminQueries;
 using CoSpace.Application.Queries.RefreshTokenQueries;
-using CoSpace.Application.Queries.UserQueries;
 using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
 using CoSpace.Utility.Models.Request;
@@ -15,18 +15,18 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CoSpace.API.Controllers
 {
-    [Route("api/user")]
+    [Route("api/Admin")]
     [ApiController]
     [Authorize]
-    public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse) : ControllerBase
     {
         private static HashSet<string> RevokedTokens = new HashSet<string>();
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] UserLogin request)
+        public async Task<IActionResult> Login([FromBody] AdminLogin request)
         {
-            var result = await sender.Send(new UsersLoginQuery(request.Email, request.Password));
+            var result = await sender.Send(new AdminsLoginQuery(request.Email, request.Password));
 
             if (result is not null)
             {
@@ -45,7 +45,7 @@ namespace CoSpace.API.Controllers
                 return Ok(apiResponse);
             }
 
-            return Unauthorized(new { message = "Invalid username or password." });
+            return Unauthorized(new { message = "Invalid Adminname or password." });
         }
 
         [HttpPost("logout")]
@@ -85,7 +85,7 @@ namespace CoSpace.API.Controllers
 
             try
             {
-                var newAccessToken = await tokenService.RefreshAccessToken(refreshToken, "user");
+                var newAccessToken = await tokenService.RefreshAccessToken(refreshToken, "admin");
                 return Ok(new
                 {
                     AccessToken = newAccessToken
@@ -98,17 +98,17 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetAdmins()
         {
-            var result = await sender.Send(new GetUsersQuery());
+            var result = await sender.Send(new GetAdminsQuery());
 
-            var UserDtos = mapper.Map<IEnumerable<UserDTO>>(result);
+            var AdminDtos = mapper.Map<IEnumerable<AdminDTO>>(result);
 
-            if (UserDtos is not null)
+            if (AdminDtos is not null)
             {
 
                 apiResponse.Success = true;
-                apiResponse.Data = UserDtos;
+                apiResponse.Data = AdminDtos;
 
                 return Ok(apiResponse);
             }
@@ -116,11 +116,11 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserDTO UserDto)
+        public async Task<IActionResult> AddAdminAsync([FromBody] AdminDTO AdminDto)
         {
-            var User = mapper.Map<User>(UserDto);
+            var Admin = mapper.Map<Admin>(AdminDto);
 
-            var result = await sender.Send(new AddUserCommand(User));
+            var result = await sender.Send(new AddAdminCommand(Admin));
             if (result is not null)
             {
                 apiResponse.Success = true;
@@ -132,9 +132,9 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserAsync([FromBody] User User)
+        public async Task<IActionResult> UpdateAdminAsync([FromBody] Admin Admin)
         {
-            var result = await sender.Send(new UpdateUserCommand(User));
+            var result = await sender.Send(new UpdateAdminCommand(Admin));
             if (result)
             {
                 apiResponse.Success = true;
@@ -145,9 +145,9 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser([FromRoute] int id)
+        public async Task<IActionResult> DeleteAdmin([FromRoute] int id)
         {
-            var result = await sender.Send(new DeleteUserCommand(id));
+            var result = await sender.Send(new DeleteAdminCommand(id));
 
             if (result)
             {

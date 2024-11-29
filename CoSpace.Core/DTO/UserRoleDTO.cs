@@ -1,9 +1,8 @@
-﻿namespace CoSpace.Core.Entities
+﻿namespace CoSpace.Core.DTO
 {
-    public class UserRole : Base
+    public class UserRoleDTO
     {
         public required string Name { get; set; }
         public string Description { get; set; } = null!;
-
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace CoSpace.Core.Entities
+﻿using CoSpace.Core.Entities;
+
+namespace CoSpace.Core.DTO
 {
     public class ComplaintDTO : Base
     {
@@ -6,6 +8,5 @@
         public required string Title { get; set; }
         public string Description { get; set; } = null!;
         public required string Status { get; set; } // e.g., Open, In Progress, Resolved
-        public virtual User User { get; set; }
     }
 }

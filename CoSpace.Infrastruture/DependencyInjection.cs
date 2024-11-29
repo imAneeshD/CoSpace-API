@@ -25,14 +25,16 @@ namespace CoSpace.Infrastruture
             });
 
             // Register repositories
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped(typeof(RepositoryBase<>), typeof(RepositoryBase<>));
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
-            services.AddScoped(typeof(RepositoryBase<>), typeof(RepositoryBase<>));
 
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             return services;
         }

@@ -1,15 +1,11 @@
-﻿namespace CoSpace.Core.Entities
+﻿namespace CoSpace.Core.DTO
 {
-    public class Booking : Base
+    public class BookingDTO
     {
         public int RoomId { get; set; }
         public int UserId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public required string Status { get; set; } // e.g., Pending, Confirmed, Cancelled
-
-        public virtual User User { get; set; }
-        public virtual Room Room { get; set; }
     }
-
 }

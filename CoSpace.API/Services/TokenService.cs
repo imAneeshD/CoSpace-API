@@ -1,7 +1,7 @@
 ﻿using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands.RefreshTokenCommands;
+using CoSpace.Application.Queries.AdminQueries;
 using CoSpace.Application.Queries.RefreshTokenQueries;
-using CoSpace.Application.Queries.UserQueries;
 using CoSpace.Core.Entities;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
@@ -54,8 +54,9 @@ namespace CoSpace.API.Services
             var result = await sender.Send(new AddRefreshTokenCommand(token));
         }
 
-        public async Task<string> RefreshAccessToken(string refreshToken)
+        public async Task<string> RefreshAccessToken(string refreshToken, string userType)
         {
+            string newAccessToken = string.Empty;
 
             var existingRefreshToken = await sender.Send(new GetRefreshTokenQuery(refreshToken));
 
@@ -64,11 +65,17 @@ namespace CoSpace.API.Services
                 throw new SecurityTokenException("Invalid or expired refresh token");
             }
 
-            var user = await sender.Send(new GetUserByIdQuery(existingRefreshToken.UserId));
-
-            var newAccessToken = GenerateAccessToken(user.Email, user.Id, user.OrganizationId, user.RoleId);
+            if (userType == "admin")
+            {
+                var admin = await sender.Send(new GetAdminByIdQuery(existingRefreshToken.UserId));
+                newAccessToken = GenerateAccessToken(admin.Email, admin.Id, admin.OrganizationId, admin.RoleId);
+            }
+            else
+            {
+                var user = await sender.Send(new GetAdminByIdQuery(existingRefreshToken.UserId));
+                newAccessToken = GenerateAccessToken(user.Email, user.Id, user.OrganizationId, user.RoleId);
+            }
             return newAccessToken;
         }
     }
-
 }

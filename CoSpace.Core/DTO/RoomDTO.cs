@@ -1,11 +1,11 @@
-﻿namespace CoSpace.Core.Entities
+﻿using CoSpace.Core.Entities;
+
+namespace CoSpace.Core.DTO
 {
-    public class Room : Base
+    public class RoomDTO : Base
     {
         public required string Name { get; set; }
         public required string Type { get; set; } // e.g., Meeting Room, Event Hall, Gaming Room
         public int Capacity { get; set; }
-        public ICollection<Booking> Bookings { get; set; }
     }
-
 }

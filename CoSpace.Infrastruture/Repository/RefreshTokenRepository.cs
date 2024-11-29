@@ -1,16 +1,8 @@
-﻿using Azure.Core;
-using CoSpace.Core.Entities;
+﻿using CoSpace.Core.Entities;
 using CoSpace.Core.Interface;
-using CoSpace.Infrastructure.Services;
 using CoSpace.Infrastruture.Data;
 using CoSpace.Infrastruture.Services.Interface;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoSpace.Infrastruture.Repository
 {
@@ -48,9 +40,9 @@ namespace CoSpace.Infrastruture.Repository
         {
             try
             {
-                
+
                 var refreshTokens = await dbContext.RefreshToken
-                    .Where(rt => rt.UserId == currentUserService.UserId )
+                    .Where(rt => rt.UserId == currentUserService.UserId)
                     .ToListAsync();
 
                 if (refreshTokens == null || !refreshTokens.Any())

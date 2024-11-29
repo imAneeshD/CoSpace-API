@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using CoSpace.Core.Interface;
-using CoSpace.Infrastruture.Services.Interface;
+﻿using CoSpace.Infrastruture.Services.Interface;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace CoSpace.Infrastructure.Services
 {

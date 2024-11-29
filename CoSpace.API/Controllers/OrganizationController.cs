@@ -105,7 +105,7 @@ namespace CoSpace.API.Controllers
                 apiResponse.Data = ex.Message;
                 return StatusCode(StatusCodes.Status500InternalServerError, apiResponse);
             }
-        } 
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrganization()

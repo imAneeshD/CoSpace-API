@@ -1,11 +1,9 @@
 using CoSpace.API;
-using CoSpace.API.Services.Interface;
 using CoSpace.API.Services;
+using CoSpace.API.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CoSpace.Core.Interface;
-using CoSpace.Infrastruture.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,8 +50,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 
 app.UseHttpsRedirection();
