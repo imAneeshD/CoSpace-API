@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoSpace.Application.Queries.AdminQueries
+namespace CoSpace.Application.Queries.UserQueries
 {
     public record GetUserByIdQuery(int id) : IRequest<User>;
 

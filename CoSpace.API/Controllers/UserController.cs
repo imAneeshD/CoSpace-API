@@ -1,24 +1,17 @@
-﻿using CoSpace.Utility.Models.Request;
+﻿using AutoMapper;
 using CoSpace.API.Services.Interface;
-using CoSpace.Application.Commands;
-using CoSpace.Application.Commands.UserCommand;
-using CoSpace.Application.Queries;
+using CoSpace.Application.Commands.RefreshTokenCommands;
+using CoSpace.Application.Commands.UsersCommand;
+using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Application.Queries.UserQueries;
+using CoSpace.Application.Queries.UsersQueries;
+using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
+using CoSpace.Utility.Models.Request;
+using CoSpace.Utility.Models.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using CoSpace.Core.DTO;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
-using CoSpace.Application.Queries.RefreshTokenQueries;
-using Azure.Core;
-using CoSpace.Application.Commands.RefreshTokenCommands;
-using CoSpace.Utility.Models.Response;
-using CoSpace.API.Services;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CoSpace.API.Controllers
@@ -34,11 +27,11 @@ namespace CoSpace.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLogin request)
         {
-            var result = await sender.Send(new UserLoginQuery(request.Email, request.Password));
+            var result = await sender.Send(new UsersLoginQuery(request.Email, request.Password));
 
             if (result is not null)
             {
-                var accessToken = tokenService.GenerateAccessToken(result.Email, result.IsAppUser, result.Id, result.OrganizationId, result.RoleId);
+                var accessToken = tokenService.GenerateAccessToken(result.Email, result.Id, result.OrganizationId, result.RoleId);
                 var refreshToken = tokenService.GenerateRefreshToken();
 
                 await tokenService.SaveRefreshToken(result.Id, refreshToken);
@@ -128,7 +121,7 @@ namespace CoSpace.API.Controllers
         {
             var User = mapper.Map<User>(UserDto);
 
-            var result = await sender.Send(new AddUserCommand(User));
+            var result = await sender.Send(new AddUsersCommand(User));
             if (result is not null)
             {
                 apiResponse.Success = true;
@@ -142,7 +135,7 @@ namespace CoSpace.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserAsync([FromBody] User User)
         {
-            var result = await sender.Send(new UpdateUserCommand(User));
+            var result = await sender.Send(new UpdateUsersCommand(User));
             if (result)
             {
                 apiResponse.Success = true;
@@ -155,9 +148,9 @@ namespace CoSpace.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
-            var result = await sender.Send(new DeleteUserCommand(id));
+            var result = await sender.Send(new DeleteUsersCommand(id));
 
-            if(result)
+            if (result)
             {
                 apiResponse.Success = true;
                 apiResponse.Data = result;

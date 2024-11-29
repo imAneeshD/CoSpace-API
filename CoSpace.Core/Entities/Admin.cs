@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CoSpace.Core.Entities
 {
     [Index("Username", IsUnique =true)]
-    public class Admin 
+    public class Admin : Base
     {
         public required string Username {  get; set; }
         public required string FirstName {  get; set; }

@@ -4,10 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoSpace.Core.Entities
 {
-    public class UserRole : Base
+    public class Room : Base
     {
         public required string Name { get; set; }
-        public required string Description { get; set; }
-
+        public required string Type { get; set; } // e.g., Meeting Room, Event Hall, Gaming Room
+        public int Capacity { get; set; }
+        public ICollection<Booking> Bookings { get; set; }
     }
+
 }

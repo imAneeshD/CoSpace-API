@@ -1,11 +1,9 @@
-﻿using Azure.Core;
-using CoSpace.API.Services.Interface;
+﻿using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands.RefreshTokenCommands;
-using CoSpace.Application.Queries.AdminQueries;
 using CoSpace.Application.Queries.RefreshTokenQueries;
+using CoSpace.Application.Queries.UserQueries;
 using CoSpace.Core.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,7 +14,7 @@ namespace CoSpace.API.Services
     public class TokenService(ISender sender, IConfiguration configuration) : ITokenService
     {
 
-        public string GenerateAccessToken(string email, bool isAppAdmin, int id, int OrgId, int roleId)
+        public string GenerateAccessToken(string email, int id, int? OrgId, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["Jwt:SecretKey"]);
@@ -25,7 +23,6 @@ namespace CoSpace.API.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, email),
-                    new Claim("AppAdmin", isAppAdmin.ToString()),
                     new Claim("Id", id.ToString()),
                     new Claim("OrgId", OrgId.ToString()),
                     new Claim(ClaimTypes.Role, roleId.ToString()),
@@ -59,18 +56,17 @@ namespace CoSpace.API.Services
 
         public async Task<string> RefreshAccessToken(string refreshToken)
         {
-  
-            var existingRefreshToken = await sender.Send(new GetRefreshTokenQuery(refreshToken));
 
+            var existingRefreshToken = await sender.Send(new GetRefreshTokenQuery(refreshToken));
 
             if (existingRefreshToken == null)
             {
                 throw new SecurityTokenException("Invalid or expired refresh token");
             }
 
-            var user = await sender.Send(new GetUsersByIdQuery(existingRefreshToken.UserId));
+            var user = await sender.Send(new GetUserByIdQuery(existingRefreshToken.UserId));
 
-            var newAccessToken = GenerateAccessToken(user.Email, user.IsAppAdmin, user.Id, user.OrganizationId, user.AppUserTypeId);
+            var newAccessToken = GenerateAccessToken(user.Email, user.Id, user.OrganizationId, user.RoleId);
             return newAccessToken;
         }
     }

@@ -7,62 +7,119 @@ namespace CoSpace.Infrastruture.Data
     {
         public DbSet<Organization> Organization { get; set; }
         public DbSet<UserRole> Role { get; set; }
-        public DbSet<UserRole> UserType { get; set; }
+        public DbSet<UserRole> UserRole { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
-        public DbSet<UserRole> OrganizationUserType { get; set; }
+        public DbSet<Booking> Booking { get; set; }
+        public DbSet<Room> Room { get; set; }
+        public DbSet<Notification> Notification { get; set; }
+        public DbSet<HelpRequest> HelpRequest { get; set; }
+        public DbSet<Complaint> Complaint { get; set; }
+        public DbSet<CanteenMenu> CanteenMenu { get; set; }
+        public DbSet<Admin> Admin { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Organization>().HasData(
-            new Organization
-            {
-                Id = 1,
-                Name = "CoSpace Org",
-                PrimaryEmail = "aneeshd70+cospace@gmail.com",
-                SecondaryEmail = "aneeshd70+cospace2@gmail.com",
-                Phone = "987654321",
-                Domain = "cospace.com",
-                Location = "",
-                CreatedBy = 0,
-                CreatedDate = DateTime.Now,
-                UpdatedBy = 0,
-                UpdatedDate = DateTime.Now,
-                IsDeleted = false,
-            }
-        );
+            modelBuilder.Entity<CanteenMenu>()
+              .Property(c => c.Price)
+              .HasPrecision(18, 2);
 
-            modelBuilder.Entity<UserRole>().HasData(
-      new UserRole
-      {
-          Id = 1,
-          OrganizationId = 1,
-          Name = "cospace_admin",
-          CreatedBy = 0,
-          CreatedDate = DateTime.Now,
-          UpdatedBy = 0,
-          UpdatedDate = DateTime.Now,
-          IsDeleted = false,
-      }
-  );
-            // Seed default Admin
-            modelBuilder.Entity<User>().HasData(
-                new User
+            modelBuilder.Entity<Organization>().HasData(
+                new Organization
                 {
                     Id = 1,
-                    Username = "admin",
-                    Password = "admin123",
-                    Email = "admin@gmail.com",
-                    FirstName = "Default",
-                    LastName = "Admin",
-                    AppUserTypeId = 1,
-                    RoleId = 1,
-                    OrganizationId = 1,
-                    IsAppAdmin = true,
+                    Name = "CoSpace Org",
+                    PrimaryEmail = "aneeshd70+cospace@gmail.com",
+                    SecondaryEmail = "aneeshd70+cospace2@gmail.com",
+                    Phone = "6360405023",
+                    Domain = "cospace.com",
+                    Location = "",
+                    CreatedBy = 0,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 0,
+                    UpdatedDate = DateTime.Now,
+                    IsDeleted = false,
                 }
+            );
+
+
+            // Make OrganizationId optional for UserRole
+            modelBuilder.Entity<UserRole>()
+                .Property(ur => ur.OrganizationId)
+                .IsRequired(false);
+
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole
+                {
+                    Id = 1,
+                    Name = "Super Admin",
+                    Description = "Super Admin with all the privileges.",
+                    OrganizationId = null, // Explicitly set to null
+                    CreatedBy = 0,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 0,
+                    UpdatedDate = DateTime.Now,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Id = 2,
+                    Name = "Organization Admin",
+                    Description = "Admin with privileges to manage their own organization.",
+                    OrganizationId = null, // Explicitly set to null
+                    CreatedBy = 0,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 0,
+                    UpdatedDate = DateTime.Now,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Id = 3,
+                    Name = "Employee",
+                    Description = "Regular employee with limited access.",
+                    OrganizationId = null,
+                    CreatedBy = 0,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 0,
+                    UpdatedDate = DateTime.Now,
+                    IsDeleted = false,
+                },
+                new UserRole
+                {
+                    Id = 4,
+                    Name = "Guest",
+                    Description = "Guest user with very limited access.",
+                    OrganizationId = null, // Explicitly set to null
+                    CreatedBy = 0,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 0,
+                    UpdatedDate = DateTime.Now,
+                    IsDeleted = false,
+                }
+            );
+
+            modelBuilder.Entity<Admin>().HasData(
+               new Admin
+               {
+                   Id = 1,
+                   Username = "super_admin",
+                   FirstName ="Aneesh",
+                   LastName ="Dembala",
+                   Email ="aneeshd70@gmail.com",
+                   Phone = "6360405023",
+                   Password = "aneesha",
+                   RoleId = 1,
+                   OrganizationId =1,
+                   CreatedBy = 0,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 0,
+                   UpdatedDate = DateTime.Now,
+                   IsDeleted = false,
+               }
             );
         }
     }
