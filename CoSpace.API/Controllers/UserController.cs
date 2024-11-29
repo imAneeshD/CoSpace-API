@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CoSpace.API.Controllers
 {
-    [Route("api/user")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
