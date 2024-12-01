@@ -33,7 +33,7 @@ namespace CoSpace.API.Controllers
                 var accessToken = tokenService.GenerateAccessToken(result.Email, result.Id, result.OrganizationId, result.RoleId);
                 var refreshToken = refreshTokenService.GenerateRefreshToken();
 
-                await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id);
+                await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id, result.OrganizationId);
 
                 apiResponse.Success = true;
                 apiResponse.Data = new

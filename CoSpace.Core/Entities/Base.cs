@@ -10,6 +10,6 @@
         public int UpdatedBy { get; set; } = 1;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
 
-        public virtual Organization Organization { get; set; }
+        public virtual Organization? Organization { get; set; }
     }
 }

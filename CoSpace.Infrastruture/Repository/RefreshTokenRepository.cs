@@ -42,7 +42,8 @@ namespace CoSpace.Infrastruture.Repository
             {
 
                 var refreshTokens = await dbContext.RefreshToken
-                    .Where(rt => rt.UserId == currentUserService.UserId)
+                    .Where(rt => rt.UserId == currentUserService.UserId
+                    && rt.OrganizationId == currentUserService.OrgId)
                     .ToListAsync();
 
                 if (refreshTokens == null || !refreshTokens.Any())

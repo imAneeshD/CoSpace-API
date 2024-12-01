@@ -18,7 +18,7 @@ namespace CoSpace.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
+    public class AdminController(ISender sender, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -34,7 +34,7 @@ namespace CoSpace.API.Controllers
                 var accessToken = tokenService.GenerateAccessToken(result.Email, result.Id, result.OrganizationId, result.RoleId);
                 var refreshToken = refreshTokenService.GenerateRefreshToken();
 
-                await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id);
+                await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id, result.OrganizationId);
 
                 apiResponse.Success = true;
                 apiResponse.Data = new
@@ -46,24 +46,13 @@ namespace CoSpace.API.Controllers
                 return Ok(apiResponse);
             }
 
-            return Unauthorized(new { message = "Invalid Adminname or password." });
+            return Unauthorized(new { message = "Invalid credentials." });
         }
 
-        [HttpPost("logout")]
+        [AllowAnonymous]
+        [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
-
-            Request.Headers.TryGetValue("RefreshToken", out var token);
-
-            var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
-
-            if (refreshToken == null || refreshToken.IsRevoked)
-            {
-                return BadRequest("Invalid token");
-            }
-
-            refreshToken.IsRevoked = true;
-            refreshToken.Revoked = DateTime.Now;
 
             await refreshTokenService.DeleteRefreshToken();
 
@@ -73,28 +62,37 @@ namespace CoSpace.API.Controllers
             return Ok(apiResponse);
         }
 
-
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
-            if (!Request.Headers.TryGetValue("RefreshToken", out var authorizationHeader))
+            if (!Request.Headers.TryGetValue("RefreshToken", out var token))
             {
-                return Unauthorized("RefreshToken header missing.");
+                return BadRequest("RefreshToken header missing.");
             }
 
-            var refreshToken = authorizationHeader.ToString();
+            var refreshToken = token.ToString();
 
             try
             {
                 var newAccessToken = await refreshTokenService.RefreshAccessToken(refreshToken, "admin");
-                return Ok(new
+
+                var tokenResponse = new
                 {
-                    AccessToken = newAccessToken
-                });
+                    AccessToken = newAccessToken,
+                    RefreshToken = refreshToken
+                };
+
+                var apiResponse = new ApiResponse
+                {
+                    Success = true,
+                    Data = tokenResponse // Send both tokens in the response data
+                };
+                return Ok(apiResponse);
             }
             catch (SecurityTokenException)
             {
-                return Unauthorized("Invalid or expired refresh token.");
+                return StatusCode(410, "Invalid or expired refresh token.");
             }
         }
 
@@ -116,17 +114,16 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAdminAsync([FromBody] AdminDTO AdminDto)
+        public async Task<IActionResult> AddAdminAsync([FromBody] Admin admin)
         {
-            var Admin = mapper.Map<Admin>(AdminDto);
-
-            var result = await sender.Send(new AddAdminCommand(Admin));
+            var result = await sender.Send(new AddAdminCommand(admin));
+            var adminDTO = admin != null ? mapper.Map<AdminDTO>(admin) : null;
             if (result is not null)
             {
                 apiResponse.Success = true;
-                apiResponse.Data = result;
+                apiResponse.Data = adminDTO;
 
-                return Ok(result);
+                return Ok(apiResponse);
             }
             return BadRequest();
         }

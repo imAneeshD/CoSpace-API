@@ -4,7 +4,7 @@ namespace CoSpace.API.Services.Interface
 {
     public interface IRefreshTokenService
     {
-        Task<RefreshToken> AddRefreshTokenAsync(string refreshToken, int userId);
+        Task<RefreshToken> AddRefreshTokenAsync(string refreshToken, int UserId, int? OrganizationId);
         Task<string> RefreshAccessToken(string refreshToken, string userType);
         public string GenerateRefreshToken();
         Task<bool> DeleteRefreshToken();

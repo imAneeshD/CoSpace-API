@@ -14,6 +14,6 @@ namespace CoSpace.Core.Entities
         public required int RoleId { get; set; }
 
         //ForeignKey Table
-        public virtual UserRole Role { get; set; }
+        public virtual UserRole? Role { get; set; }
     }
 }

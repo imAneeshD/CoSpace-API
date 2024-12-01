@@ -3,25 +3,27 @@ using CoSpace.Application.Commands.RefreshTokenCommands;
 using CoSpace.Application.Queries.AdminQueries;
 using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Core.Entities;
+using CoSpace.Infrastruture.Services.Interface;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 namespace CoSpace.API.Services
 {
-    public class RefreshTokenService(ISender sender, ITokenService tokenService) : IRefreshTokenService
+    public class RefreshTokenService(ISender sender, ITokenService tokenService, ICurrentUserService currentUserService) : IRefreshTokenService
     {
         public string GenerateRefreshToken()
         {
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
 
-        public async Task<RefreshToken> AddRefreshTokenAsync(string refreshToken, int userId)
+        public async Task<RefreshToken> AddRefreshTokenAsync(string refreshToken, int UserId, int? organizationId)
         {
             var token = new RefreshToken
             {
-                UserId = userId,
+                UserId = UserId,
                 Token = refreshToken,
+                OrganizationId = (int)organizationId,
                 Expires = DateTime.Now.AddDays(7),
                 Created = DateTime.Now
             };

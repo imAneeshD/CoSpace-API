@@ -4,20 +4,13 @@ using System.Security.Claims;
 
 namespace CoSpace.Infrastructure.Services
 {
-    public class CurrentUserService : ICurrentUserService
+    public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
         public int UserId
         {
             get
             {
-                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("Id")?.Value;
+                var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirst("Id")?.Value;
                 return userIdClaim != null ? int.Parse(userIdClaim) : 0;
             }
         }
@@ -26,7 +19,7 @@ namespace CoSpace.Infrastructure.Services
         {
             get
             {
-                var userTypeClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("OrgId")?.Value;
+                var userTypeClaim = httpContextAccessor.HttpContext?.User?.FindFirst("OrgId")?.Value;
                 return userTypeClaim != null ? int.Parse(userTypeClaim) : 0;
             }
         }
@@ -35,7 +28,7 @@ namespace CoSpace.Infrastructure.Services
         {
             get
             {
-                var userTypeClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Role)?.Value;
+                var userTypeClaim = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Role)?.Value;
                 return userTypeClaim != null ? int.Parse(userTypeClaim) : 0;
             }
         }
@@ -44,7 +37,7 @@ namespace CoSpace.Infrastructure.Services
         {
             get
             {
-                var userTypeClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("AppUserTypeId")?.Value;
+                var userTypeClaim = httpContextAccessor.HttpContext?.User?.FindFirst("AppUserTypeId")?.Value;
                 return userTypeClaim != null ? int.Parse(userTypeClaim) : 0;
             }
         }
