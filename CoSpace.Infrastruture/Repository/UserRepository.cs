@@ -54,17 +54,17 @@ namespace CoSpace.Infrastruture.Repository
         }
         public async Task<User> GetUserById(int id)
         {
-            return await dbContext.User.FirstOrDefaultAsync(x => x.Id == id);
+            return await dbContext.User.Include(x=>x.Role).Include(x=>x.Organization).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<User>> GetUsers()
         {
-            return await dbContext.User.ToListAsync();
+            return await dbContext.User.Include(x=>x.Role).Include(x=>x.Organization).ToListAsync();
         }
 
-        public async Task<User> Login(string email, string password)
+        public async Task<User> Login(string email, string password, string OrgId)
         {
-            var result = await dbContext.User.FirstOrDefaultAsync(x => x.Email == email && x.Password == password && x.IsDeleted == false);
+            var result = await dbContext.User.FirstOrDefaultAsync(x => x.OrganizationId == int.Parse(OrgId) && x.Email == email && x.Password == password && x.IsDeleted == false);
             if (result is not null)
             {
                 return result;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CoSpace.API.Services;
 using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands.AdminCommands;
 using CoSpace.Application.Commands.RefreshTokenCommands;
@@ -6,6 +7,7 @@ using CoSpace.Application.Queries.AdminQueries;
 using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
+using CoSpace.Infrastruture.Services.Interface;
 using CoSpace.Utility.Models.Request;
 using CoSpace.Utility.Models.Response;
 using MediatR;
@@ -18,6 +20,7 @@ namespace CoSpace.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [AdminOnly]
     public class AdminController(ISender sender, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
 
@@ -72,6 +75,10 @@ namespace CoSpace.API.Controllers
             }
 
             var refreshToken = token.ToString();
+            if (refreshToken == string.Empty)
+            {
+                return BadRequest("RefreshToken is empty");
+            }
 
             try
             {
@@ -99,6 +106,7 @@ namespace CoSpace.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAdmins()
         {
+
             var result = await sender.Send(new GetAdminsQuery());
 
             var AdminDtos = mapper.Map<IEnumerable<AdminDTO>>(result);

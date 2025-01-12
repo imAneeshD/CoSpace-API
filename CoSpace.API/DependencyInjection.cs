@@ -1,6 +1,8 @@
 ﻿using CoSpace.Application;
 using CoSpace.Core;
+using CoSpace.Infrastructure.Services;
 using CoSpace.Infrastruture;
+using CoSpace.Infrastruture.Services.Interface;
 using CoSpace.Utility.Models.Response;
 
 namespace CoSpace.API
@@ -12,7 +14,7 @@ namespace CoSpace.API
             services.AddApplicationDI()
                 .AddInfrastructureDI()
                 .AddCoreDI(configuration);
-
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddTransient<ApiResponse>();
             return services;
         }

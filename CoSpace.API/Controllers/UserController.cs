@@ -20,13 +20,11 @@ namespace CoSpace.API.Controllers
     [Authorize]
     public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
-        private static HashSet<string> RevokedTokens = new HashSet<string>();
-
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLogin request)
         {
-            var result = await sender.Send(new UsersLoginQuery(request.Email, request.Password));
+            var result = await sender.Send(new UsersLoginQuery(request.Email, request.Password, request.OrgID));
 
             if (result is not null)
             {
@@ -102,7 +100,25 @@ namespace CoSpace.API.Controllers
         {
             var result = await sender.Send(new GetUsersQuery());
 
-            var UserDtos = mapper.Map<IEnumerable<UserDTO>>(result);
+            var UserDtos = mapper.Map<IEnumerable<UserRetrieveDTO>>(result);
+
+            if (UserDtos is not null)
+            {
+
+                apiResponse.Success = true;
+                apiResponse.Data = UserDtos;
+
+                return Ok(apiResponse);
+            }
+            return BadRequest();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            var result = await sender.Send(new GetUserByIdQuery(id));
+
+            var UserDtos = mapper.Map<IEnumerable<UserRetrieveDTO>>(result);
 
             if (UserDtos is not null)
             {
@@ -116,7 +132,7 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserDTO UserDto)
+        public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDTO UserDto)
         {
             var User = mapper.Map<User>(UserDto);
 
@@ -132,8 +148,10 @@ namespace CoSpace.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserAsync([FromBody] User User)
+        public async Task<IActionResult> UpdateUserAsync([FromBody] UserCreateDTO UserDto)
         {
+            var User = mapper.Map<User>(UserDto);
+
             var result = await sender.Send(new UpdateUserCommand(User));
             if (result)
             {
