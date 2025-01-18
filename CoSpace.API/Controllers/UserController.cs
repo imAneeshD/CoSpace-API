@@ -6,6 +6,7 @@ using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Application.Queries.UserQueries;
 using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
+using CoSpace.Infrastruture.Services.Interface;
 using CoSpace.Utility.Models.Request;
 using CoSpace.Utility.Models.Response;
 using MediatR;
@@ -18,7 +19,7 @@ namespace CoSpace.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
+    public class UserController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService, ICurrentUserService currentUserService) : ControllerBase
     {
         [HttpPost("login")]
         [AllowAnonymous]
@@ -45,6 +46,7 @@ namespace CoSpace.API.Controllers
 
             return Unauthorized(new { message = "Invalid username or password." });
         }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
@@ -95,6 +97,7 @@ namespace CoSpace.API.Controllers
             }
         }
 
+        [AdminOnly]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -117,11 +120,19 @@ namespace CoSpace.API.Controllers
         public async Task<IActionResult> GetUserById(int id)
         {
             var result = await sender.Send(new GetUserByIdQuery(id));
+
             if (result == null)
             {
-               apiResponse.Success = false;
+                apiResponse.Success = false;
                 apiResponse.Message = "User not found";
                 return NotFound(apiResponse);
+            }
+
+            if(currentUserService.OrgId != result.OrganizationId)
+            {
+                apiResponse.Success = false;
+                apiResponse.Message = "You don't have permission to access the user.";
+                return Unauthorized(apiResponse);
             }
 
             var UserDtos = mapper.Map<UserRetrieveDTO>(result);
@@ -140,6 +151,13 @@ namespace CoSpace.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDTO UserDto)
         {
+            if (UserDto.OrganizationId != currentUserService.OrgId)
+            {
+                apiResponse.Success = false;
+                apiResponse.Data = "You dont have permission to add the user to that organization.";
+                return Unauthorized(apiResponse);
+            }
+
             var User = mapper.Map<User>(UserDto);
 
             var result = await sender.Send(new AddUserCommand(User));
@@ -156,6 +174,13 @@ namespace CoSpace.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserAsync([FromBody] UserCreateDTO UserDto)
         {
+            if (UserDto.OrganizationId != currentUserService.OrgId)
+            {
+                apiResponse.Success = false;
+                apiResponse.Data = "You dont have permission to add the user to that organization.";
+                return Unauthorized(apiResponse);
+            }
+
             var User = mapper.Map<User>(UserDto);
 
             var result = await sender.Send(new UpdateUserCommand(User));
@@ -171,7 +196,31 @@ namespace CoSpace.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
+
+            if(id==currentUserService.UserId)
+            {
+                apiResponse.Success = false;
+                apiResponse.Data = "You cannot delete yourself.";
+                return Unauthorized(apiResponse);
+            }
+
+            var user = await sender.Send(new GetUserByIdQuery(id));
+
+            if (user is null) { 
+            
+                apiResponse.Success = false;
+                apiResponse.Data = "User not found";
+                return NotFound(apiResponse);
+            }
+
             var result = await sender.Send(new DeleteUserCommand(id));
+
+            if (user.OrganizationId != currentUserService.OrgId)
+            {
+                apiResponse.Success = false;
+                apiResponse.Data = "You dont have permission to add the user to that organization.";
+                return Unauthorized(apiResponse);
+            }
 
             if (result)
             {
