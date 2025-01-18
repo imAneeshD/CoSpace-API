@@ -117,8 +117,14 @@ namespace CoSpace.API.Controllers
         public async Task<IActionResult> GetUserById(int id)
         {
             var result = await sender.Send(new GetUserByIdQuery(id));
+            if (result == null)
+            {
+               apiResponse.Success = false;
+                apiResponse.Message = "User not found";
+                return NotFound(apiResponse);
+            }
 
-            var UserDtos = mapper.Map<IEnumerable<UserRetrieveDTO>>(result);
+            var UserDtos = mapper.Map<UserRetrieveDTO>(result);
 
             if (UserDtos is not null)
             {

@@ -21,8 +21,8 @@ namespace CoSpace.Core.DTO
         public string LastName { get; set; } = null!;
         public required string Email { get; set; }
         public required string Phone { get; set; }
-        //public required int RoleId { get; set; }
-        //public required int OrganizationId { get; set; }
+        public required int RoleId { get; set; }
+        public required int OrganizationId { get; set; }
 
         public virtual UserRole Role { get; set; } = null!;
         public virtual Organization Organization { get; set; } = null!;

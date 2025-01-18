@@ -16,9 +16,4 @@
     <ProjectReference Include="..\CoSpace.Core\CoSpace.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\RoleCommands\" />
-    <Folder Include="Queries\RoleQueries\" />
-  </ItemGroup>
-
 </Project>

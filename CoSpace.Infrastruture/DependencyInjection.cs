@@ -31,6 +31,7 @@ namespace CoSpace.Infrastruture
             
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 

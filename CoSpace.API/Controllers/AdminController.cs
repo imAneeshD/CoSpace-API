@@ -121,6 +121,20 @@ namespace CoSpace.API.Controllers
             return BadRequest();
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAdminById([FromRoute] int id)
+        {
+            var result = await sender.Send(new GetAdminByIdQuery(id));
+            var AdminDto = mapper.Map<AdminDTO>(result);
+            if (AdminDto is not null)
+            {
+                apiResponse.Success = true;
+                apiResponse.Data = AdminDto;
+                return Ok(apiResponse);
+            }
+            return NotFound();
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddAdminAsync([FromBody] Admin admin)
         {

@@ -6,16 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoSpace.Infrastruture.Repository
 {
-    public class RoleRepository(ApplicationDbContext dbContext, RepositoryBase<UserRole> repositoryBase, ICurrentUserService currentUserService) : IRoleRepository
+    public class UserRoleRepository(ApplicationDbContext dbContext, RepositoryBase<UserRole> repositoryBase, ICurrentUserService currentUserService) : IUserRoleRepository
     {
-        public async Task<UserRole> AddRole(UserRole role)
+        public async Task<UserRole> AddUserRole(UserRole role)
         {
             repositoryBase.SetAuditFields(role, currentUserService.UserId, "INSERT");
             dbContext.Role.Add(role);
             await dbContext.SaveChangesAsync();
             return role;
         }
-        public async Task<bool> UpdateRole(UserRole role)
+        public async Task<bool> UpdateUserRole(UserRole role)
         {
             var existingRole = await dbContext.Role.FirstOrDefaultAsync(x => x.Id == role.Id);
             if (existingRole != null)
@@ -23,13 +23,14 @@ namespace CoSpace.Infrastruture.Repository
                 repositoryBase.SetAuditFields(existingRole, currentUserService.UserId, "UPDATE");
 
                 existingRole.Name = role.Name;
+                existingRole.Description = role.Description;
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
         }
 
-        public async Task<bool> DeleteRole(int id)
+        public async Task<bool> DeleteUserRole(int id)
         {
             var existingRole = await dbContext.Role.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -45,14 +46,14 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<UserRole> GetRole(int id)
+        public async Task<UserRole> GetUserRole(int id)
         {
-            throw new NotImplementedException();
+            return await dbContext.Role.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<UserRole>> GetRoles()
+        public async Task<IEnumerable<UserRole>> GetUserRoles()
         {
-            throw new NotImplementedException();
+            return await dbContext.Role.Where(x => x.IsDeleted == false).ToListAsync();
         }
 
     }
