@@ -17,7 +17,7 @@ namespace CoSpace.API.Controllers
     [ApiController]
     [Authorize]
     [AdminOnly]
-    public class AdminController(ISender sender, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -165,7 +165,15 @@ namespace CoSpace.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAdmin([FromRoute] int id)
         {
-            var result = await sender.Send(new DeleteAdminCommand(id));
+            var admin = await sender.Send(new GetAdminByIdQuery(id));
+            if (admin is null)
+            {
+                apiResponse.Success = false;
+                apiResponse.Message = "Admin not found";
+                return NotFound(apiResponse);
+            }
+
+            var result = await sender.Send(new DeleteAdminCommand(admin));
 
             if (result)
             {
@@ -175,32 +183,32 @@ namespace CoSpace.API.Controllers
             return NotFound(apiResponse);
         }
 
-        [HttpGet("stats")]
-        public IActionResult GetAdminDashboardStats()
+        [HttpGet("dashboard-stats")]
+        public async Task<IActionResult> GetAdminDashboardStats()
         {
+
+            var result = await sender.Send(new GetAdminStatsQuery());
+
             var data = new
             {
-                TotalAdmins = 10, // Replace with actual DB query
-                TotalOrganizations = 25,
-                ActiveBookings = 120,
-                OpenTickets = 15,
-                BookingTrends = new int[] { 50, 60, 70, 80, 100 }, // Example dataset
-                RoomUtilization = new int[] { 30, 40, 20, 50, 70 },
-                RecentActivities = new[]
-                {
-                new { Title = "New Organization Registered", Description = "TechCorp joined.", Time = "2 hours ago", Icon = "fa-building" },
-                new { Title = "Booking Created", Description = "Conference Room A booked.", Time = "5 hours ago", Icon = "fa-calendar-check" }
-            },
-                KeyMetrics = new
-                {
-                    AverageBookingDuration = "2.5 hours",
-                    PeakBookingTime = "10:00 AM - 12:00 PM",
-                    MostBookedRoom = "Conference Room A",
-                    TicketResolutionTime = "24 hours"
-                }
+                TotalAdmins =result.TotalAdmins,
+                AdminsChange = result.AdminsChange,  // Change in admins
+                TotalOrganizations = result.TotalOrganizations,
+                OrganizationsChange = result.OrganizationsChange,  // Change in organizations
+                ActiveBookings = result.ActiveBookings,
+                ActiveBookingsChange = result.ActiveBookingsChange,  // Change in bookings
+                OpenTickets = result.OpenTickets,
+                OpenTicketsChange = result.OpenTicketsChange,  // Change in open tickets
+                BookingTrends = result.BookingTrends ,//new int[] { 50, 60, 70, 80, 100 }, // Example dataset
+                RoomUtilization =result.RoomUtilization, // new int[] { 30, 40, 20, 50, 70 },
+                RecentActivities = result.RecentActivities,
+                KeyMetrics = result.KeyMetrics
             };
+
             apiResponse.Data = data;
+
             return Ok(apiResponse);
         }
+
     }
 }

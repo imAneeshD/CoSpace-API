@@ -29,26 +29,21 @@ namespace CoSpace.Infrastruture.Repository
                 existingRoom.Capacity = Room.Capacity;
                 existingRoom.Description = Room.Description;
                 existingRoom.Status = Room.Status;
-                existingRoom.OrganizationId= Room.OrganizationId;
+                existingRoom.OrganizationId = Room.OrganizationId;
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
         }
 
-        public async Task<bool> DeleteRoom(int id)
+        public async Task<bool> DeleteRoom(Room room)
         {
-            var existingRoom = await dbContext.Room.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existingRoom is not null)
-            {
-                repositoryBase.SetAuditFields(existingRoom, currentUserService.UserId, "DELETE");
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            repositoryBase.SetAuditFields(room, currentUserService.UserId, "DELETE");
+            room.IsDeleted = true;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<Room> GetRoomById(int id)
         {
             var Room = await dbContext.Room.FirstOrDefaultAsync(x => x.Id == id);

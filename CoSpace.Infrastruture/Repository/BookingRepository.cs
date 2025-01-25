@@ -26,29 +26,23 @@ namespace CoSpace.Infrastruture.Repository
 
                 existingBooking.RoomId = Booking.RoomId;
                 existingBooking.UserId = Booking.UserId;
-                existingBooking.StartTime= Booking.EndTime;
-                existingBooking.OrganizationId= Booking.OrganizationId;
+                existingBooking.StartTime = Booking.EndTime;
+                existingBooking.OrganizationId = Booking.OrganizationId;
 
-    
+
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
         }
 
-        public async Task<bool> DeleteBooking(int id)
+        public async Task<bool> DeleteBooking(Booking existingBooking)
         {
-            var existingBooking = await dbContext.Booking.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (existingBooking is not null)
-            {
-                repositoryBase.SetAuditFields(existingBooking, currentUserService.UserId, "DELETE");
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            repositoryBase.SetAuditFields(existingBooking, currentUserService.UserId, "DELETE");
+            existingBooking.IsDeleted = true;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<Booking> GetBookingById(int id)
         {
             var Booking = await dbContext.Booking.FirstOrDefaultAsync(x => x.Id == id);

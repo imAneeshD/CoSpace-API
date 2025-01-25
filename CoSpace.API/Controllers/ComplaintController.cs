@@ -82,7 +82,15 @@ namespace CoSpace.API.Controllers
                     apiResponse.Message = "Complaint id is required.";
                     return BadRequest(apiResponse);
                 }
-                var result = await sender.Send(new DeleteComplaintCommand(id));
+
+                var complaint = await sender.Send(new GetComplaintByIdQuery(id));
+                if (complaint == null)
+                {
+                    apiResponse.Success = false;
+                    apiResponse.Message = "Complaint not found.";
+                    return NotFound(apiResponse);
+                }
+                var result = await sender.Send(new DeleteComplaintCommand(complaint));
                 if (result)
                 {
                     return Ok(apiResponse);

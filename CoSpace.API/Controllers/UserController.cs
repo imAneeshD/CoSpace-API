@@ -211,7 +211,7 @@ namespace CoSpace.API.Controllers
                 return NotFound(apiResponse);
             }
 
-            var result = await sender.Send(new DeleteUserCommand(id));
+            var result = await sender.Send(new DeleteUserCommand(user));
 
             if (user.OrganizationId != currentUserService.OrgId)
             {

@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<HelpRequest> AddHelpRequest(HelpRequest HelpRequest);
         Task<bool> UpdateHelpRequest(HelpRequest HelpRequest);
-        Task<bool> DeleteHelpRequest(int id);
+        Task<bool> DeleteHelpRequest(HelpRequest helpRequest);
         Task<HelpRequest> GetHelpRequestById(int id);
         Task<IEnumerable<HelpRequest>> GetHelpRequests();
     }

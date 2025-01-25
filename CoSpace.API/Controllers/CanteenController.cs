@@ -74,7 +74,15 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                var result = await sender.Send(new DeleteCanteenMenuCommand(id));
+                var canteenMenu = await sender.Send(new GetCanteenMenuByIdQuery(id));
+                if (canteenMenu == null)
+                {
+                    apiResponse.Success = false;
+                    apiResponse.Message = "CanteenMenu not found";
+                    return NotFound(apiResponse);
+                }
+
+                var result = await sender.Send(new DeleteCanteenMenuCommand(canteenMenu));
                 if (result)
                 {
                     return Ok(apiResponse);

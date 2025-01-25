@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<Room> AddRoom(Room Room);
         Task<bool> UpdateRoom(Room Room);
-        Task<bool> DeleteRoom(int id);
+        Task<bool> DeleteRoom(Room room);
         Task<Room> GetRoomById(int id);
         Task<IEnumerable<Room>> GetRooms();
     }

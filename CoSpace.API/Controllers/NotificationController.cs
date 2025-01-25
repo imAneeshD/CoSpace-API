@@ -75,13 +75,10 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                if (id <= 0)
-                {
-                    apiResponse.Success = false;
-                    apiResponse.Message = "Notification id is required.";
-                    return BadRequest(apiResponse);
-                }
-                var result = await sender.Send(new DeleteNotificationCommand(id));
+                
+                var notification = await sender.Send(new GetNotificationByIdQuery(id));
+
+                var result = await sender.Send(new DeleteNotificationCommand(notification));
                 if (result)
                 {
                     return Ok(apiResponse);

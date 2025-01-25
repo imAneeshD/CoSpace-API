@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<CanteenMenu> AddCanteenMenu(CanteenMenu CanteenMenu);
         Task<bool> UpdateCanteenMenu(CanteenMenu CanteenMenu);
-        Task<bool> DeleteCanteenMenu(int id);
+        Task<bool> DeleteCanteenMenu(CanteenMenu canteenMenu);
         Task<CanteenMenu> GetCanteenMenuById(int id);
         Task<IEnumerable<CanteenMenu>> GetCanteenMenus();
     }

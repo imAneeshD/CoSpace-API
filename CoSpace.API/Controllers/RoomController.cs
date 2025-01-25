@@ -75,13 +75,14 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                if (id <= 0)
+                var room = await sender.Send(new GetRoomByIdQuery(id));
+                if (room == null)
                 {
                     apiResponse.Success = false;
-                    apiResponse.Message = "Room id is required.";
-                    return BadRequest(apiResponse);
+                    apiResponse.Message = "Room not found.";
+                    return NotFound(apiResponse);
                 }
-                var result = await sender.Send(new DeleteRoomCommand(id));
+                var result = await sender.Send(new DeleteRoomCommand(room));
                 if (result)
                 {
                     return Ok(apiResponse);
@@ -110,7 +111,6 @@ namespace CoSpace.API.Controllers
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
-                apiResponse.Success = false;
                 apiResponse.Message = "Something went wrong.";
                 return StatusCode(StatusCodes.Status400BadRequest, apiResponse);
             }
@@ -140,8 +140,7 @@ namespace CoSpace.API.Controllers
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
-                apiResponse.Success = false;
-                apiResponse.Message = "Something went wrong.";
+                apiResponse.Message = "Not found.";
                 return StatusCode(StatusCodes.Status400BadRequest, apiResponse);
             }
             catch (Exception ex)

@@ -81,7 +81,14 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                var result = await sender.Send(new DeleteUserRoleCommand(id));
+                var role = await sender.Send(new GetUserRoleByIdQuery(id));
+                if (role == null)
+                {
+                    apiResponse.Success = false;
+                    apiResponse.Message = "Role not found.";
+                    return StatusCode(StatusCodes.Status404NotFound, apiResponse);
+                }
+                var result = await sender.Send(new DeleteUserRoleCommand(role));
                 if (result)
                 {
                     apiResponse.Data = result;

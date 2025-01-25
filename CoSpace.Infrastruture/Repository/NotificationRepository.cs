@@ -37,19 +37,13 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteNotification(int id)
+        public async Task<bool> DeleteNotification(Notification notification)
         {
-            var existingNotification = await dbContext.Notification.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (existingNotification is not null)
-            {
-                repositoryBase.SetAuditFields(existingNotification, currentUserService.UserId, "DELETE");
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            repositoryBase.SetAuditFields(notification, currentUserService.UserId, "DELETE");
+            notification.IsDeleted = true;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<Notification> GetNotificationById(int id)
         {
             var Notification = await dbContext.Notification.FirstOrDefaultAsync(x => x.Id == id);

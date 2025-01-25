@@ -34,19 +34,13 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteComplaint(int id)
+        public async Task<bool> DeleteComplaint(Complaint existingComplaint)
         {
-            var existingComplaint = await dbContext.Complaint.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (existingComplaint is not null)
-            {
-                repositoryBase.SetAuditFields(existingComplaint, currentUserService.UserId, "DELETE");
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            repositoryBase.SetAuditFields(existingComplaint, currentUserService.UserId, "DELETE");
+            existingComplaint.IsDeleted = true;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<Complaint> GetComplaintById(int id)
         {
             var Complaint = await dbContext.Complaint.FirstOrDefaultAsync(x => x.Id == id);

@@ -37,21 +37,15 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteAdmin(int id)
+        public async Task<bool> DeleteAdmin(Admin existingAdmin)
         {
-            var existingAdmin = await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == id);
+            repositoryBase.SetAuditFields(existingAdmin, currentAdminService.UserId, "DELETE");
 
-            if (existingAdmin is not null)
-            {
-                repositoryBase.SetAuditFields(existingAdmin, currentAdminService.UserId, "DELETE");
+            existingAdmin.IsDeleted = true;
 
-                existingAdmin.IsDeleted = true;
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<Admin> GetAdminById(int id)
         {
             return await dbContext.Admin.FirstOrDefaultAsync(x => x.Id == id);
@@ -70,6 +64,90 @@ namespace CoSpace.Infrastruture.Repository
                 return result;
             }
             return null;
+        }
+
+        public Task<DashboardStats> GetAdminStats()
+        {
+            var lastMonth = DateTime.UtcNow.AddMonths(-1);
+
+
+            DashboardStats dashboardStats = new DashboardStats();
+            dashboardStats.TotalAdmins = dbContext.Admin.Count();
+            dashboardStats.TotalOrganizations = dbContext.Organization.Count();
+            dashboardStats.ActiveBookings = dbContext.Booking.Count();
+            dashboardStats.OpenTickets = dbContext.HelpRequest.Count(t => t.Status == "Open");
+
+            dashboardStats.OrganizationsChange = dbContext.Organization.Count(o => o.CreatedDate >= lastMonth) - dbContext.Organization.Count(o => o.CreatedDate < lastMonth);
+            dashboardStats.AdminsChange = dbContext.Organization.Count(a => a.CreatedDate >= lastMonth) - dbContext.Admin.Count(a => a.CreatedDate < lastMonth);
+            dashboardStats.ActiveBookingsChange = dbContext.Booking.Count(b => b.Status == "Active" && b.CreatedDate >= lastMonth) - dbContext.Booking.Count(b => b.Status == "Active" && b.CreatedDate < lastMonth);
+
+            dashboardStats.OpenTicketsChange = dbContext.HelpRequest.Count(t => t.Status == "Open" && t.CreatedDate >= lastMonth) - dbContext.HelpRequest.Count(t => t.Status == "Open" && t.CreatedDate < lastMonth);
+
+            dashboardStats.BookingTrends = dbContext.Booking.Where(b => b.CreatedDate >= lastMonth).GroupBy(b => b.CreatedDate.Date).Select(g => g.Count()).ToArray();
+
+            dashboardStats.RoomUtilization = dbContext.Booking.Where(b => b.CreatedDate >= lastMonth).GroupBy(b => b.RoomId).Select(g => g.Count()).ToArray();
+
+            dashboardStats.RecentActivities = dbContext.Activity.Include(a => a.User).OrderByDescending(a => a.CreatedAt).Take(5).ToList();
+
+
+            var averageBookingDuration = dbContext.Booking
+            .AsEnumerable()
+            .Select(b => (b.EndTime - b.StartTime).TotalMinutes)
+            .DefaultIfEmpty(0) // Return 0 if the sequence is empty
+            .Average();
+
+
+            // Convert to hours and minutes
+            var hours = (int)(averageBookingDuration / 60);
+            var minutes = (int)(averageBookingDuration % 60);
+            string averageBookingDurationStr = (hours == 0 && minutes == 0)
+                ? "NA"
+                : $"{hours}h {minutes}m";
+
+            var peakBookingTimeQuery = dbContext.Booking
+            .AsEnumerable() // Fetch the data into memory
+            .GroupBy(b => b.StartTime.Hour) // Group by hour of the day
+            .OrderByDescending(g => g.Count()) // Order by the most frequent hour
+            .FirstOrDefault(); // Get the most booked hour
+
+            // Check if there is a group, and get the peak hour
+            string peakBookingTime = peakBookingTimeQuery?.Key.ToString() ?? "NA"; // Use default value of 0 if no bookings are available
+
+
+            var mostBookedRoomGroup = dbContext.Booking
+              .AsEnumerable() // Fetch the data into memory
+              .GroupBy(r => r.Room.Name) // Group by room name in memory
+              .OrderByDescending(g => g.Count()) // Order by the most frequent room
+              .FirstOrDefault(); // Get the room with the highest booking count
+
+            // Get the most booked room name (or a default value if no bookings exist)
+            string mostBookedRoom = mostBookedRoomGroup?.Key ?? "No bookings";
+
+
+            var ticketResolutionTime = dbContext.HelpRequest
+                .AsEnumerable() // Fetch the data into memory
+                .Select(t => (t.ResolvedAt - t.CreatedDate).TotalMinutes) // Calculate the duration in minutes in memory
+                .DefaultIfEmpty(0) // Return 0 if the sequence is empty
+                .Average(); // Calculate the average of the durations
+
+
+            // Convert to hours and minutes
+            var resolutionHours = (int)(ticketResolutionTime / 60);
+            var resolutionMinutes = (int)(ticketResolutionTime % 60);
+            string ticketResolutionTimeStr = (resolutionHours == 0 && resolutionMinutes == 0)
+                ? "NA"
+                : $"{resolutionHours}h {resolutionMinutes}m";
+
+
+            dashboardStats.KeyMetrics = new KeyMetrics
+            {
+                AverageBookingDuration = averageBookingDurationStr, // e.g., "1h 30m"
+                PeakBookingTime = peakBookingTime.ToString(), // e.g., "10:00 AM"
+                MostBookedRoom = mostBookedRoom ?? "NA", // e.g., "Room 1"
+                TicketResolutionTime = ticketResolutionTimeStr // e.g., "2h 30m"
+            };
+
+            return Task.FromResult(dashboardStats);
         }
     }
 }

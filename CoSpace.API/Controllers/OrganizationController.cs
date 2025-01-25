@@ -84,7 +84,15 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                var result = await sender.Send(new DeleteOrganizationCommand(id));
+                var organization = await sender.Send(new GetOrganizationByIdQuery(id));
+                if (organization is null)
+                {
+                    apiResponse.Success = false;
+                    apiResponse.Message = "Organization not found.";
+                    return StatusCode(404, apiResponse);
+                }
+
+                var result = await sender.Send(new DeleteOrganizationCommand(organization));
 
                 if (result)
                 {

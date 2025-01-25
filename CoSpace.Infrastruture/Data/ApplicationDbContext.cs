@@ -17,6 +17,7 @@ namespace CoSpace.Infrastruture.Data
         public DbSet<Complaint> Complaint { get; set; }
         public DbSet<CanteenMenu> CanteenMenu { get; set; }
         public DbSet<Admin> Admin { get; set; }
+        public DbSet<Activity> Activity { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

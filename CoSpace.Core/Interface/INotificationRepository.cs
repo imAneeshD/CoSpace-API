@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<Notification> AddNotification(Notification Notification);
         Task<bool> UpdateNotification(Notification Notification);
-        Task<bool> DeleteNotification(int id);
+        Task<bool> DeleteNotification(Notification notification);
         Task<Notification> GetNotificationById(int id);
         Task<IEnumerable<Notification>> GetNotifications();
     }

@@ -29,26 +29,20 @@ namespace CoSpace.Infrastruture.Repository
                 existingHelpRequest.Title = HelpRequest.Title;
                 existingHelpRequest.Description = HelpRequest.Description;
                 existingHelpRequest.Status = HelpRequest.Status;
-                existingHelpRequest.OrganizationId= HelpRequest.OrganizationId;
+                existingHelpRequest.OrganizationId = HelpRequest.OrganizationId;
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
         }
 
-        public async Task<bool> DeleteHelpRequest(int id)
+        public async Task<bool> DeleteHelpRequest(HelpRequest helpRequest)
         {
-            var existingHelpRequest = await dbContext.HelpRequest.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (existingHelpRequest is not null)
-            {
-                repositoryBase.SetAuditFields(existingHelpRequest, currentUserService.UserId, "DELETE");
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            repositoryBase.SetAuditFields(helpRequest, currentUserService.UserId, "DELETE");
+            helpRequest.IsDeleted = true;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<HelpRequest> GetHelpRequestById(int id)
         {
             var HelpRequest = await dbContext.HelpRequest.FirstOrDefaultAsync(x => x.Id == id);

@@ -76,7 +76,9 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                var result = await sender.Send(new DeleteHelpRequestCommand(id));
+                var helpRequest = await sender.Send(new GetHelpRequestByIdQuery(id));
+
+                var result = await sender.Send(new DeleteHelpRequestCommand(helpRequest));
                 if (result)
                 {
                     return Ok(apiResponse);

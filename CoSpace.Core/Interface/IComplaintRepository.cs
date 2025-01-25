@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<Complaint> AddComplaint(Complaint Complaint);
         Task<bool> UpdateComplaint(Complaint Complaint);
-        Task<bool> DeleteComplaint(int id);
+        Task<bool> DeleteComplaint(Complaint complaint);
         Task<Complaint> GetComplaintById(int id);
         Task<IEnumerable<Complaint>> GetComplaints();
     }

@@ -31,26 +31,21 @@ namespace CoSpace.Infrastruture.Repository
                 existingCanteenMenu.AvailableTo = CanteenMenu.AvailableTo;
                 existingCanteenMenu.OrganizationId = CanteenMenu.OrganizationId;
 
-    
+
 
                 return await dbContext.SaveChangesAsync() > 0;
             }
             return false;
         }
 
-        public async Task<bool> DeleteCanteenMenu(int id)
+        public async Task<bool> DeleteCanteenMenu(CanteenMenu canteenMenu)
         {
-            var existingCanteenMenu = await dbContext.CanteenMenu.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existingCanteenMenu is not null)
-            {
-                repositoryBase.SetAuditFields(existingCanteenMenu, currentUserService.UserId, "DELETE");
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            repositoryBase.SetAuditFields(canteenMenu, currentUserService.UserId, "DELETE");
+            canteenMenu.IsDeleted = true;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<CanteenMenu> GetCanteenMenuById(int id)
         {
             var CanteenMenu = await dbContext.CanteenMenu.FirstOrDefaultAsync(x => x.Id == id);

@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<Booking> AddBooking(Booking Booking);
         Task<bool> UpdateBooking(Booking Booking);
-        Task<bool> DeleteBooking(int id);
+        Task<bool> DeleteBooking(Booking existingBooking);
         Task<Booking> GetBookingById(int id);
         Task<IEnumerable<Booking>> GetBookings();
     }

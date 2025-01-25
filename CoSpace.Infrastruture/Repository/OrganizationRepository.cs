@@ -11,15 +11,15 @@ namespace CoSpace.Infrastruture.Repository
         public async Task<Organization> AddOrganization(Organization organization)
         {
             //repositoryBase.SetAuditFields(organization, currentUserService.UserId, "INSERT");
-            
+
             // Need Audit Fields in Organization Entity
             organization.UpdatedBy = currentUserService.UserId;
             organization.UpdatedDate = DateTime.Now;
             organization.CreatedBy = currentUserService.UserId;
             organization.CreatedDate = DateTime.Now;
-            
+
             dbContext.Organization.Add(organization);
-            
+
             await dbContext.SaveChangesAsync();
             return organization;
         }
@@ -46,23 +46,17 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteOrganization(int id)
+        public async Task<bool> DeleteOrganization(Organization existingOrganization)
         {
-            var existingOrganization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == id);
+            //repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
+            existingOrganization.UpdatedBy = currentUserService.UserId;
+            existingOrganization.UpdatedDate = DateTime.Now;
 
-            if (existingOrganization is not null)
-            {
-                //repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
-                existingOrganization.UpdatedBy = currentUserService.UserId;
-                existingOrganization.UpdatedDate = DateTime.Now;
+            existingOrganization.IsDeleted = true;
 
-                existingOrganization.IsDeleted = true;
-
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            return await dbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<Organization> GetOrganizationById(int id)
         {
             var organization = await dbContext.Organization.FirstOrDefaultAsync(x => x.Id == id);

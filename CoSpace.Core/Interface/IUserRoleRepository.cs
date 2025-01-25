@@ -6,7 +6,7 @@ namespace CoSpace.Core.Interface
     {
         Task<UserRole> AddUserRole(UserRole role);
         Task<bool> UpdateUserRole(UserRole role);
-        Task<bool> DeleteUserRole(int id);
+        Task<bool> DeleteUserRole(UserRole id);
         Task<UserRole> GetUserRole(int id);
         Task<IEnumerable<UserRole>> GetUserRoles();
     }
