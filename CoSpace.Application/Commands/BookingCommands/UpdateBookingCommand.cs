@@ -4,11 +4,11 @@ using MediatR;
 
 namespace CoSpace.Application.Commands.BookingCommands
 {
-    public record UpdateHelpRequestCommand(Booking Booking) : IRequest<bool>;
+    public record UpdateBookingCommand(Booking Booking) : IRequest<bool>;
 
-    public class UpdateBookingCommandHandler(IBookingRepository BookingRepository) : IRequestHandler<UpdateHelpRequestCommand, bool>
+    public class UpdateBookingCommandHandler(IBookingRepository BookingRepository) : IRequestHandler<UpdateBookingCommand, bool>
     {
-        public async Task<bool> Handle(UpdateHelpRequestCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateBookingCommand request, CancellationToken cancellationToken)
         {
             return await BookingRepository.UpdateBooking(request.Booking);
         }

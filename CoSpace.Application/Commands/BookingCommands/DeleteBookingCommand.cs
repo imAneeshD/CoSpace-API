@@ -3,11 +3,11 @@ using MediatR;
 
 namespace CoSpace.Application.Commands.BookingCommands
 {
-    public record DeleteHelpRequestCommand(int id) : IRequest<bool>;
+    public record DeleteBookingCommand(int id) : IRequest<bool>;
 
-    public class DeleteBookingCommandHandler(IBookingRepository BookingRepository) : IRequestHandler<DeleteHelpRequestCommand, bool>
+    public class DeleteBookingCommandHandler(IBookingRepository BookingRepository) : IRequestHandler<DeleteBookingCommand, bool>
     {
-        public async Task<bool> Handle(DeleteHelpRequestCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteBookingCommand request, CancellationToken cancellationToken)
         {
             return await BookingRepository.DeleteBooking(request.id);
         }

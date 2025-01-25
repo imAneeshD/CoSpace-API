@@ -4,12 +4,12 @@ using MediatR;
 
 namespace CoSpace.Application.Queries.BookingQueries
 {
-    public record GetAllHelpRequestQuery() : IRequest<IEnumerable<Booking>>;
+    public record GetAllBookingQuery() : IRequest<IEnumerable<Booking>>;
 
     public class GetAllBookingQueryHandler(IBookingRepository BookingRepository)
-        : IRequestHandler<GetAllHelpRequestQuery, IEnumerable<Booking>>
+        : IRequestHandler<GetAllBookingQuery, IEnumerable<Booking>>
     {
-        public async Task<IEnumerable<Booking>> Handle(GetAllHelpRequestQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Booking>> Handle(GetAllBookingQuery request, CancellationToken cancellationToken)
         {
             return await BookingRepository.GetBookings();
         }
