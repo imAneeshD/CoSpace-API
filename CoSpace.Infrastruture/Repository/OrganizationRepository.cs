@@ -77,7 +77,7 @@ namespace CoSpace.Infrastruture.Repository
 
         public Task<Organization> GetOrganizationByName(string name)
         {
-            return dbContext.Organization.FirstOrDefaultAsync(x => x.Name == name);
+            return dbContext.Organization.FirstOrDefaultAsync(x => x.OrgLoginKey == name);
         }
     }
 }

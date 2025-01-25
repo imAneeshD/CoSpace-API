@@ -28,6 +28,15 @@ namespace CoSpace.API.Controllers
         {
 
             Organization organization = await sender.Send(new GetOrganizationByNameQuery(request.OrgName));
+            
+            if(organization is null)
+            {
+                apiResponse.Success = false;
+                apiResponse.Message = "Organization not found.";
+                return NotFound(apiResponse);
+            }
+
+            request.OrgID = organization.Id.ToString();
 
             var result = await sender.Send(new UsersLoginQuery(request.Email, request.Password, request.OrgID));
 
