@@ -26,7 +26,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new AddComplaintCommand(complaint));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddComplaint), new { id = result.Id }, apiResponse);
                 }
@@ -57,7 +56,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateComplaintCommand(complaint));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -87,7 +85,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new DeleteComplaintCommand(id));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -111,7 +108,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetComplaintByIdQuery(id));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -136,7 +132,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetAllComplaintQuery());
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

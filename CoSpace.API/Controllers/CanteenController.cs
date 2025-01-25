@@ -25,7 +25,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new AddCanteenMenuCommand(CanteenMenu));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddCanteenMenuMenu), new { id = result.Id }, apiResponse);
                 }
@@ -55,7 +54,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateCanteenMenuCommand(CanteenMenu));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -79,7 +77,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new DeleteCanteenMenuCommand(id));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -103,7 +100,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetCanteenMenuByIdQuery(id));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -128,7 +124,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetAllCanteenMenuQuery());
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

@@ -25,7 +25,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new AddRoomCommand(room));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddRoom), new { id = result.Id }, apiResponse);
                 }
@@ -56,7 +55,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateRoomCommand(room));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -86,7 +84,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new DeleteRoomCommand(id));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -110,7 +107,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetAllRoomQuery());
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -141,7 +137,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetRoomByIdQuery(id));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

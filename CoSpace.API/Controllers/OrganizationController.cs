@@ -30,7 +30,6 @@ namespace CoSpace.API.Controllers
 
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddOrganization), new { id = result.Id }, apiResponse);
                 }
@@ -63,7 +62,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateOrganizationCommand(organization));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -90,7 +88,6 @@ namespace CoSpace.API.Controllers
 
                 if (result)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -116,7 +113,6 @@ namespace CoSpace.API.Controllers
 
                 if (result.Any())
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -144,7 +140,6 @@ namespace CoSpace.API.Controllers
 
                 if (result is not null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

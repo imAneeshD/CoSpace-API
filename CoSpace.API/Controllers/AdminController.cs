@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using CoSpace.API.Services;
 using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands.AdminCommands;
-using CoSpace.Application.Commands.RefreshTokenCommands;
 using CoSpace.Application.Queries.AdminQueries;
-using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
-using CoSpace.Infrastruture.Services.Interface;
 using CoSpace.Utility.Models.Request;
 using CoSpace.Utility.Models.Response;
 using MediatR;
@@ -39,7 +35,6 @@ namespace CoSpace.API.Controllers
 
                 await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id, result.OrganizationId);
 
-                apiResponse.Success = true;
                 apiResponse.Data = new
                 {
                     AccessToken = accessToken,
@@ -56,10 +51,19 @@ namespace CoSpace.API.Controllers
         [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
+            Request.Headers.TryGetValue("RefreshToken", out var token);
+
+            var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
+            if (refreshToken == null || refreshToken.IsRevoked)
+            {
+                return BadRequest("Invalid token");
+            }
+
+            refreshToken.IsRevoked = true;
+            refreshToken.Revoked = DateTime.Now;
 
             await refreshTokenService.DeleteRefreshToken();
 
-            apiResponse.Success = true;
             apiResponse.Message = "Successfully logged out.";
 
             return Ok(apiResponse);
@@ -92,7 +96,6 @@ namespace CoSpace.API.Controllers
 
                 var apiResponse = new ApiResponse
                 {
-                    Success = true,
                     Data = tokenResponse // Send both tokens in the response data
                 };
                 return Ok(apiResponse);
@@ -113,7 +116,6 @@ namespace CoSpace.API.Controllers
 
             if (AdminDtos is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = AdminDtos;
 
                 return Ok(apiResponse);
@@ -128,7 +130,6 @@ namespace CoSpace.API.Controllers
             var AdminDto = mapper.Map<AdminDTO>(result);
             if (AdminDto is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = AdminDto;
                 return Ok(apiResponse);
             }
@@ -142,7 +143,6 @@ namespace CoSpace.API.Controllers
             var adminDTO = admin != null ? mapper.Map<AdminDTO>(admin) : null;
             if (result is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = adminDTO;
 
                 return Ok(apiResponse);
@@ -156,7 +156,6 @@ namespace CoSpace.API.Controllers
             var result = await sender.Send(new UpdateAdminCommand(Admin));
             if (result)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
                 return Ok(apiResponse);
             }
@@ -170,11 +169,38 @@ namespace CoSpace.API.Controllers
 
             if (result)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
                 return Ok(apiResponse);
             }
             return NotFound(apiResponse);
+        }
+
+        [HttpGet("stats")]
+        public IActionResult GetAdminDashboardStats()
+        {
+            var data = new
+            {
+                TotalAdmins = 10, // Replace with actual DB query
+                TotalOrganizations = 25,
+                ActiveBookings = 120,
+                OpenTickets = 15,
+                BookingTrends = new int[] { 50, 60, 70, 80, 100 }, // Example dataset
+                RoomUtilization = new int[] { 30, 40, 20, 50, 70 },
+                RecentActivities = new[]
+                {
+                new { Title = "New Organization Registered", Description = "TechCorp joined.", Time = "2 hours ago", Icon = "fa-building" },
+                new { Title = "Booking Created", Description = "Conference Room A booked.", Time = "5 hours ago", Icon = "fa-calendar-check" }
+            },
+                KeyMetrics = new
+                {
+                    AverageBookingDuration = "2.5 hours",
+                    PeakBookingTime = "10:00 AM - 12:00 PM",
+                    MostBookedRoom = "Conference Room A",
+                    TicketResolutionTime = "24 hours"
+                }
+            };
+            apiResponse.Data = data;
+            return Ok(apiResponse);
         }
     }
 }

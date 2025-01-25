@@ -28,7 +28,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new AddBookingCommand(bookingRequest));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddBooking), new { id = result.Id }, apiResponse);
                 }
@@ -59,7 +58,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateBookingCommand(bookingRequest));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -89,7 +87,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new DeleteBookingCommand(id));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -113,7 +110,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetAllBookingQuery());
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

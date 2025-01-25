@@ -26,7 +26,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new AddHelpRequestCommand(help));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddHelp), new { id = result.Id }, apiResponse);
                 }
@@ -57,7 +56,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateHelpRequestCommand(help));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -81,7 +79,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new DeleteHelpRequestCommand(id));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     return Ok(apiResponse);
                 }
                 apiResponse.Success = false;
@@ -105,7 +102,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetAllHelpRequestQuery());
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -130,7 +126,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetHelpRequestByIdQuery(id));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

@@ -34,7 +34,6 @@ namespace CoSpace.API.Controllers
 
                 await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id, result.OrganizationId);
 
-                apiResponse.Success = true;
                 apiResponse.Data = new
                 {
                     AccessToken = accessToken,
@@ -66,7 +65,6 @@ namespace CoSpace.API.Controllers
 
             await refreshTokenService.DeleteRefreshToken();
 
-            apiResponse.Success = true;
             apiResponse.Message = "Successfully logged out.";
 
             return Ok(apiResponse);
@@ -112,7 +110,6 @@ namespace CoSpace.API.Controllers
             if (UserDtos is not null)
             {
 
-                apiResponse.Success = true;
                 apiResponse.Data = UserDtos;
 
                 return Ok(apiResponse);
@@ -144,7 +141,6 @@ namespace CoSpace.API.Controllers
             if (UserDtos is not null)
             {
 
-                apiResponse.Success = true;
                 apiResponse.Data = UserDtos;
 
                 return Ok(apiResponse);
@@ -167,7 +163,6 @@ namespace CoSpace.API.Controllers
             var result = await sender.Send(new AddUserCommand(User));
             if (result is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
 
                 return Ok(result);
@@ -190,7 +185,6 @@ namespace CoSpace.API.Controllers
             var result = await sender.Send(new UpdateUserCommand(User));
             if (result)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
                 return Ok(apiResponse);
             }
@@ -228,7 +222,6 @@ namespace CoSpace.API.Controllers
 
             if (result)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
                 return Ok(apiResponse);
             }
