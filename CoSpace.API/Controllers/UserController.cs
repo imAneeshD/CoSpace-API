@@ -48,7 +48,7 @@ namespace CoSpace.API.Controllers
         }
 
 
-        [HttpPost("logout")]
+        [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
 
