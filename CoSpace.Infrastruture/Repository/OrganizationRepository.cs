@@ -11,11 +11,15 @@ namespace CoSpace.Infrastruture.Repository
         public async Task<Organization> AddOrganization(Organization organization)
         {
             //repositoryBase.SetAuditFields(organization, currentUserService.UserId, "INSERT");
+            
+            // Need Audit Fields in Organization Entity
             organization.UpdatedBy = currentUserService.UserId;
             organization.UpdatedDate = DateTime.Now;
             organization.CreatedBy = currentUserService.UserId;
             organization.CreatedDate = DateTime.Now;
+            
             dbContext.Organization.Add(organization);
+            
             await dbContext.SaveChangesAsync();
             return organization;
         }
@@ -26,6 +30,8 @@ namespace CoSpace.Infrastruture.Repository
             if (existingOrganization != null)
             {
                 //repositoryBase.SetAuditFields(existingOrganization, currentUserService.UserId, "UPDATE");
+
+                // Need Audit Fields in Organization Entity
 
                 existingOrganization.Location = organization.Location;
                 existingOrganization.Domain = organization.Domain;

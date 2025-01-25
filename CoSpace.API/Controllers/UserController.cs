@@ -74,15 +74,19 @@ namespace CoSpace.API.Controllers
 
 
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         public async Task<IActionResult> RefreshToken()
         {
             if (!Request.Headers.TryGetValue("RefreshToken", out var authorizationHeader))
             {
-                return Unauthorized("RefreshToken header missing.");
+                return BadRequest("RefreshToken header missing.");
             }
 
             var refreshToken = authorizationHeader.ToString();
-
+            if (refreshToken == string.Empty)
+            {
+                return BadRequest("RefreshToken is empty");
+            }
             try
             {
                 var newAccessToken = await refreshTokenService.RefreshAccessToken(refreshToken, "user");
@@ -93,7 +97,7 @@ namespace CoSpace.API.Controllers
             }
             catch (SecurityTokenException)
             {
-                return Unauthorized("Invalid or expired refresh token.");
+                return BadRequest("Invalid or expired refresh token.");
             }
         }
 

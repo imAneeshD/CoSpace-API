@@ -12,10 +12,10 @@ namespace CoSpace.Infrastruture.Data
         public DbSet<RefreshToken> RefreshToken { get; set; }
         public DbSet<Booking> Booking { get; set; }
         public DbSet<Room> Room { get; set; }
-        public DbSet<NotificationDTO> Notification { get; set; }
+        public DbSet<Notification> Notification { get; set; }
         public DbSet<HelpRequest> HelpRequest { get; set; }
-        public DbSet<ComplaintDTO> Complaint { get; set; }
-        public DbSet<CanteenMenuDTO> CanteenMenu { get; set; }
+        public DbSet<Complaint> Complaint { get; set; }
+        public DbSet<CanteenMenu> CanteenMenu { get; set; }
         public DbSet<Admin> Admin { get; set; }
 
 
@@ -23,7 +23,7 @@ namespace CoSpace.Infrastruture.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<CanteenMenuDTO>()
+            modelBuilder.Entity<CanteenMenu>()
               .Property(c => c.Price)
               .HasPrecision(18, 2);
 

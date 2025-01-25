@@ -27,13 +27,22 @@ namespace CoSpace.Infrastruture
             // Register repositories
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(typeof(RepositoryBase<>), typeof(RepositoryBase<>));
+            
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAdminRepository, AdminRepository>();
-            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<ICanteenRepository, CanteenMenuRepository>();
+            services.AddScoped<IComplaintRepository, ComplaintRepository>();
+            services.AddScoped<IHelpRepository, HelpRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+            services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
 
 
