@@ -33,6 +33,7 @@ namespace CoSpace.Infrastruture.Repository
 
                 // Need Audit Fields in Organization Entity
 
+                existingOrganization.OrgLoginKey = organization.OrgLoginKey;
                 existingOrganization.Location = organization.Location;
                 existingOrganization.Domain = organization.Domain;
                 existingOrganization.Name = organization.Name;
@@ -74,5 +75,9 @@ namespace CoSpace.Infrastruture.Repository
             return await dbContext.Organization.ToListAsync();
         }
 
+        public Task<Organization> GetOrganizationByName(string name)
+        {
+            return dbContext.Organization.FirstOrDefaultAsync(x => x.Name == name);
+        }
     }
 }
