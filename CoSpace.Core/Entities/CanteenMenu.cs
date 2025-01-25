@@ -1,6 +1,6 @@
 ﻿namespace CoSpace.Core.Entities
 {
-    public class CanteenMenuDTO : Base
+    public class CanteenMenu : Base
     {
         public required string ItemName { get; set; }
         public required string Description { get; set; }

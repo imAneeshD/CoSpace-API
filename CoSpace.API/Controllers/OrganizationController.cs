@@ -30,7 +30,6 @@ namespace CoSpace.API.Controllers
 
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddOrganization), new { id = result.Id }, apiResponse);
                 }
@@ -63,7 +62,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateOrganizationCommand(organization));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -86,11 +84,18 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                var result = await sender.Send(new DeleteOrganizationCommand(id));
+                var organization = await sender.Send(new GetOrganizationByIdQuery(id));
+                if (organization is null)
+                {
+                    apiResponse.Success = false;
+                    apiResponse.Message = "Organization not found.";
+                    return StatusCode(404, apiResponse);
+                }
+
+                var result = await sender.Send(new DeleteOrganizationCommand(organization));
 
                 if (result)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -116,7 +121,6 @@ namespace CoSpace.API.Controllers
 
                 if (result.Any())
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -144,7 +148,6 @@ namespace CoSpace.API.Controllers
 
                 if (result is not null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

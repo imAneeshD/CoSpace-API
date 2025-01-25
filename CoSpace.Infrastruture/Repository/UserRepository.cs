@@ -37,29 +37,25 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteUser(int id)
+        public async Task<bool> DeleteUser(User user)
         {
-            var existingUser = await dbContext.User.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existingUser is not null)
-            {
-                repositoryBase.SetAuditFields(existingUser, currentUserService.UserId, "DELETE");
+            repositoryBase.SetAuditFields(user, currentUserService.UserId, "DELETE");
 
-                existingUser.IsDeleted = true;
+            user.IsDeleted = true;
 
-                return await dbContext.SaveChangesAsync() > 0;
-            }
+            return await dbContext.SaveChangesAsync() > 0;
 
-            return false;
         }
+
         public async Task<User> GetUserById(int id)
         {
-            return await dbContext.User.Include(x=>x.Role).Include(x=>x.Organization).FirstOrDefaultAsync(x => x.Id == id);
+            return await dbContext.User.Include(x => x.Role).Include(x => x.Organization).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<User>> GetUsers()
         {
-            return await dbContext.User.Include(x=>x.Role).Include(x=>x.Organization).ToListAsync();
+            return await dbContext.User.Include(x => x.Role).Include(x => x.Organization).ToListAsync();
         }
 
         public async Task<User> Login(string email, string password, string OrgId)

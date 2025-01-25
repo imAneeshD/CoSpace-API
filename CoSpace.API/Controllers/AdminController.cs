@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using CoSpace.API.Services;
 using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands.AdminCommands;
-using CoSpace.Application.Commands.RefreshTokenCommands;
 using CoSpace.Application.Queries.AdminQueries;
-using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Core.DTO;
 using CoSpace.Core.Entities;
-using CoSpace.Infrastruture.Services.Interface;
 using CoSpace.Utility.Models.Request;
 using CoSpace.Utility.Models.Response;
 using MediatR;
@@ -21,7 +17,7 @@ namespace CoSpace.API.Controllers
     [ApiController]
     [Authorize]
     [AdminOnly]
-    public class AdminController(ISender sender, IHttpContextAccessor httpContextAccessor, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
+    public class AdminController(ISender sender, ITokenService tokenService, IMapper mapper, ApiResponse apiResponse, IRefreshTokenService refreshTokenService) : ControllerBase
     {
 
         [HttpPost("login")]
@@ -39,7 +35,6 @@ namespace CoSpace.API.Controllers
 
                 await refreshTokenService.AddRefreshTokenAsync(refreshToken, result.Id, result.OrganizationId);
 
-                apiResponse.Success = true;
                 apiResponse.Data = new
                 {
                     AccessToken = accessToken,
@@ -56,10 +51,19 @@ namespace CoSpace.API.Controllers
         [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
+            Request.Headers.TryGetValue("RefreshToken", out var token);
+
+            var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
+            if (refreshToken == null || refreshToken.IsRevoked)
+            {
+                return BadRequest("Invalid token");
+            }
+
+            refreshToken.IsRevoked = true;
+            refreshToken.Revoked = DateTime.Now;
 
             await refreshTokenService.DeleteRefreshToken();
 
-            apiResponse.Success = true;
             apiResponse.Message = "Successfully logged out.";
 
             return Ok(apiResponse);
@@ -92,7 +96,6 @@ namespace CoSpace.API.Controllers
 
                 var apiResponse = new ApiResponse
                 {
-                    Success = true,
                     Data = tokenResponse // Send both tokens in the response data
                 };
                 return Ok(apiResponse);
@@ -113,7 +116,6 @@ namespace CoSpace.API.Controllers
 
             if (AdminDtos is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = AdminDtos;
 
                 return Ok(apiResponse);
@@ -128,7 +130,6 @@ namespace CoSpace.API.Controllers
             var AdminDto = mapper.Map<AdminDTO>(result);
             if (AdminDto is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = AdminDto;
                 return Ok(apiResponse);
             }
@@ -142,7 +143,6 @@ namespace CoSpace.API.Controllers
             var adminDTO = admin != null ? mapper.Map<AdminDTO>(admin) : null;
             if (result is not null)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = adminDTO;
 
                 return Ok(apiResponse);
@@ -156,7 +156,6 @@ namespace CoSpace.API.Controllers
             var result = await sender.Send(new UpdateAdminCommand(Admin));
             if (result)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
                 return Ok(apiResponse);
             }
@@ -166,15 +165,50 @@ namespace CoSpace.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAdmin([FromRoute] int id)
         {
-            var result = await sender.Send(new DeleteAdminCommand(id));
+            var admin = await sender.Send(new GetAdminByIdQuery(id));
+            if (admin is null)
+            {
+                apiResponse.Success = false;
+                apiResponse.Message = "Admin not found";
+                return NotFound(apiResponse);
+            }
+
+            var result = await sender.Send(new DeleteAdminCommand(admin));
 
             if (result)
             {
-                apiResponse.Success = true;
                 apiResponse.Data = result;
                 return Ok(apiResponse);
             }
             return NotFound(apiResponse);
         }
+
+        [HttpGet("dashboard-stats")]
+        public async Task<IActionResult> GetAdminDashboardStats()
+        {
+
+            var result = await sender.Send(new GetAdminStatsQuery());
+
+            var data = new
+            {
+                TotalAdmins =result.TotalAdmins,
+                AdminsChange = result.AdminsChange,  // Change in admins
+                TotalOrganizations = result.TotalOrganizations,
+                OrganizationsChange = result.OrganizationsChange,  // Change in organizations
+                ActiveBookings = result.ActiveBookings,
+                ActiveBookingsChange = result.ActiveBookingsChange,  // Change in bookings
+                OpenTickets = result.OpenTickets,
+                OpenTicketsChange = result.OpenTicketsChange,  // Change in open tickets
+                BookingTrends = result.BookingTrends ,//new int[] { 50, 60, 70, 80, 100 }, // Example dataset
+                RoomUtilization =result.RoomUtilization, // new int[] { 30, 40, 20, 50, 70 },
+                RecentActivities = result.RecentActivities,
+                KeyMetrics = result.KeyMetrics
+            };
+
+            apiResponse.Data = data;
+
+            return Ok(apiResponse);
+        }
+
     }
 }

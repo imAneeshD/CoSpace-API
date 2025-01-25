@@ -30,20 +30,14 @@ namespace CoSpace.Infrastruture.Repository
             return false;
         }
 
-        public async Task<bool> DeleteUserRole(int id)
+        public async Task<bool> DeleteUserRole(UserRole role)
         {
-            var existingRole = await dbContext.Role.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existingRole is not null)
-            {
-                repositoryBase.SetAuditFields(existingRole, currentUserService.UserId, "UPDATE");
+            repositoryBase.SetAuditFields(role, currentUserService.UserId, "UPDATE");
 
-                existingRole.IsDeleted = true;
+            role.IsDeleted = true;
 
-                return await dbContext.SaveChangesAsync() > 0;
-            }
-
-            return false;
+            return await dbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<UserRole> GetUserRole(int id)

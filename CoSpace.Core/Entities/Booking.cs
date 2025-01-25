@@ -1,4 +1,6 @@
-﻿namespace CoSpace.Core.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace CoSpace.Core.Entities
 {
     public class Booking : Base
     {
@@ -8,8 +10,10 @@
         public DateTime EndTime { get; set; }
         public required string Status { get; set; } // e.g., Pending, Confirmed, Cancelled
 
-        public virtual User User { get; set; }
-        public virtual Room Room { get; set; }
-    }
+        [JsonIgnore]
+        public virtual User? User { get; set; }
 
+        [JsonIgnore]
+        public virtual Room? Room { get; set; } 
+    }
 }

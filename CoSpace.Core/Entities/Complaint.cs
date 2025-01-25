@@ -1,6 +1,6 @@
 ﻿namespace CoSpace.Core.Entities
 {
-    public class ComplaintDTO : Base
+    public class Complaint : Base
     {
         public int UserId { get; set; }
         public required string Title { get; set; }

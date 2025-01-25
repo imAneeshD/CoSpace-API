@@ -1,6 +1,6 @@
 ﻿namespace CoSpace.Core.Entities
 {
-    public class NotificationDTO : Base
+    public class Notification : Base
     {
         public required string Title { get; set; }
         public required string Message { get; set; }

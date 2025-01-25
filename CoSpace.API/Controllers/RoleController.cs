@@ -30,7 +30,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new AddUserRoleCommand(role));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return CreatedAtAction(nameof(AddRole), new { id = result.Id }, apiResponse);
                 }
@@ -61,7 +60,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new UpdateUserRoleCommand(role));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -83,10 +81,16 @@ namespace CoSpace.API.Controllers
         {
             try
             {
-                var result = await sender.Send(new DeleteUserRoleCommand(id));
+                var role = await sender.Send(new GetUserRoleByIdQuery(id));
+                if (role == null)
+                {
+                    apiResponse.Success = false;
+                    apiResponse.Message = "Role not found.";
+                    return StatusCode(StatusCodes.Status404NotFound, apiResponse);
+                }
+                var result = await sender.Send(new DeleteUserRoleCommand(role));
                 if (result)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -111,7 +115,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetUserRoleByIdQuery(id));
                 if (result != null)
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }
@@ -136,7 +139,6 @@ namespace CoSpace.API.Controllers
                 var result = await sender.Send(new GetAllUserRolesQuery());
                 if (result.Any())
                 {
-                    apiResponse.Success = true;
                     apiResponse.Data = result;
                     return Ok(apiResponse);
                 }

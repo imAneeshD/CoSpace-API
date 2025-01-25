@@ -17,13 +17,13 @@ namespace CoSpace.Infrastruture.Repository
             var currentTime = DateTime.Now;
 
 
-            if (tranactionType == "INSERT")
+            if (tranactionType.ToLower() == "insert")
             {
                 entity.CreatedBy = currentUser;
                 entity.CreatedDate = currentTime;
                 entity.IsDeleted = false;
             }
-            else if (tranactionType == "DELETE")
+            else if (tranactionType.ToLower() == "delete")
             {
                 entity.IsDeleted = true;
             }

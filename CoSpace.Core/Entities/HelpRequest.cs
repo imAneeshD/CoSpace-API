@@ -7,6 +7,7 @@
         public string Description { get; set; } = null!;
         public required string Status { get; set; } // e.g., Open, In Progress, Resolved
         public virtual User User { get; set; }
+        public DateTime ResolvedAt { get; set; }
     }
 
 }

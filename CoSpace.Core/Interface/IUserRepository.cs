@@ -8,7 +8,7 @@ namespace CoSpace.Core.Interface
         Task<User> GetUserById(int id);
         Task<User> AddUser(User User);
         Task<bool> UpdateUser(User User);
-        Task<bool> DeleteUser(int Id);
+        Task<bool> DeleteUser(User user);
         Task<User> Login(string email, string password, string OrgId);
     }
 }
