@@ -77,9 +77,17 @@ namespace CoSpace.Infrastruture.Repository
             dashboardStats.ActiveBookings = dbContext.Booking.Count();
             dashboardStats.OpenTickets = dbContext.HelpRequest.Count(t => t.Status == "Open");
 
-            dashboardStats.OrganizationsChange = dbContext.Organization.Count(o => o.CreatedDate >= lastMonth) - dbContext.Organization.Count(o => o.CreatedDate < lastMonth);
-            dashboardStats.AdminsChange = dbContext.Organization.Count(a => a.CreatedDate >= lastMonth) - dbContext.Admin.Count(a => a.CreatedDate < lastMonth);
-            dashboardStats.ActiveBookingsChange = dbContext.Booking.Count(b => b.Status == "Active" && b.CreatedDate >= lastMonth) - dbContext.Booking.Count(b => b.Status == "Active" && b.CreatedDate < lastMonth);
+            var addedOrganizations = dbContext.Organization.Count(o => o.CreatedDate >= lastMonth && !o.IsDeleted);
+            var deletedOrganizations = dbContext.Organization.Count(o => o.CreatedDate < lastMonth && o.IsDeleted);
+            var addedAdmins = dbContext.Admin.Count(a => a.CreatedDate >= lastMonth && !a.IsDeleted);
+            var deletedAdmins = dbContext.Admin.Count(a => a.CreatedDate < lastMonth && a.IsDeleted);
+
+
+            dashboardStats.OrganizationsChange = (addedOrganizations + deletedOrganizations) == 0 ? 0 : addedOrganizations + deletedOrganizations;
+
+            dashboardStats.AdminsChange = (addedAdmins + deletedAdmins) == 0 ? 0 : addedAdmins + deletedAdmins;
+
+            dashboardStats.ActiveBookingsChange = dbContext.Booking.Count(b => b.Status == "Confirmed" && b.CreatedDate >= lastMonth) - dbContext.Booking.Count(b => b.Status == "Confirmed" && b.CreatedDate < lastMonth);
 
             dashboardStats.OpenTicketsChange = dbContext.HelpRequest.Count(t => t.Status == "Open" && t.CreatedDate >= lastMonth) - dbContext.HelpRequest.Count(t => t.Status == "Open" && t.CreatedDate < lastMonth);
 
@@ -105,16 +113,25 @@ namespace CoSpace.Infrastruture.Repository
                 : $"{hours}h {minutes}m";
 
             var peakBookingTimeQuery = dbContext.Booking
-            .AsEnumerable() // Fetch the data into memory
-            .GroupBy(b => b.StartTime.Hour) // Group by hour of the day
-            .OrderByDescending(g => g.Count()) // Order by the most frequent hour
-            .FirstOrDefault(); // Get the most booked hour
+             .AsEnumerable() // Fetch the data into memory
+             .GroupBy(b => new { Hour = b.StartTime.Hour, Period = b.StartTime.Hour < 12 ? "AM" : "PM" }) // Group by hour and AM/PM period
+             .OrderByDescending(g => g.Count()) // Order by the most frequent hour
+             .FirstOrDefault(); // Get the most booked hour
+
+
+            var peakTime = "";
 
             // Check if there is a group, and get the peak hour
-            string peakBookingTime = peakBookingTimeQuery?.Key.ToString() ?? "NA"; // Use default value of 0 if no bookings are available
+            if (peakBookingTimeQuery != null)
+            {
+                var hour = peakBookingTimeQuery.Key.Hour;
+                var period = peakBookingTimeQuery.Key.Period;
 
+                peakTime = $"{hour % 12}:{peakBookingTimeQuery.First().StartTime.Minute:D2} {period}"; // Format the time (12-hour format)
+                                                                                                           // peakTime will give you something like "3:00 PM" or "10:30 AM"
+            }
 
-            var mostBookedRoomGroup = dbContext.Booking
+            var mostBookedRoomGroup = dbContext.Booking.Include(x => x.Room)
               .AsEnumerable() // Fetch the data into memory
               .GroupBy(r => r.Room.Name) // Group by room name in memory
               .OrderByDescending(g => g.Count()) // Order by the most frequent room
@@ -142,7 +159,7 @@ namespace CoSpace.Infrastruture.Repository
             dashboardStats.KeyMetrics = new KeyMetrics
             {
                 AverageBookingDuration = averageBookingDurationStr, // e.g., "1h 30m"
-                PeakBookingTime = peakBookingTime.ToString(), // e.g., "10:00 AM"
+                PeakBookingTime = peakTime, // e.g., "10:00 AM"
                 MostBookedRoom = mostBookedRoom ?? "NA", // e.g., "Room 1"
                 TicketResolutionTime = ticketResolutionTimeStr // e.g., "2h 30m"
             };
