@@ -8,6 +8,7 @@ namespace CoSpace.Core.Entities
     {
         public int Id { get; set; }
         public required string Name { get; set; }
+        public required string OrgLoginKey { get; set; }
         public required string Domain { get; set; }
         public required string PrimaryEmail { get; set; }
         public string SecondaryEmail { get; set; } = null!;

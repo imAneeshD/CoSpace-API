@@ -2,6 +2,7 @@
 using CoSpace.API.Services.Interface;
 using CoSpace.Application.Commands.RefreshTokenCommands;
 using CoSpace.Application.Commands.UserCommands;
+using CoSpace.Application.Queries.OrganizationQueries;
 using CoSpace.Application.Queries.RefreshTokenQueries;
 using CoSpace.Application.Queries.UserQueries;
 using CoSpace.Core.DTO;
@@ -25,6 +26,18 @@ namespace CoSpace.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLogin request)
         {
+
+            Organization organization = await sender.Send(new GetOrganizationByNameQuery(request.OrgName));
+            
+            if(organization is null)
+            {
+                apiResponse.Success = false;
+                apiResponse.Message = "Organization not found.";
+                return NotFound(apiResponse);
+            }
+
+            request.OrgID = organization.Id.ToString();
+
             var result = await sender.Send(new UsersLoginQuery(request.Email, request.Password, request.OrgID));
 
             if (result is not null)
@@ -51,7 +64,7 @@ namespace CoSpace.API.Controllers
         public async Task<IActionResult> Logout()
         {
 
-            Request.Headers.TryGetValue("RefreshToken", out var token);
+            Request.Headers.TryGetValue("refreshtoken", out var token);
 
             var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
 

@@ -38,6 +38,7 @@ namespace CoSpace.Infrastruture.Data
                     Phone = "6360405023",
                     Domain = "cospace.com",
                     Location = "",
+                    OrgLoginKey = "cospace",
                     CreatedBy = 0,
                     CreatedDate = DateTime.Now,
                     UpdatedBy = 0,

@@ -2,8 +2,9 @@
 {
     public class UserLogin
     {
-        public required string OrgID { get; set; }
-        public required string Email { get; set; }
-        public required string Password { get; set; }
+        public string? OrgID { get; set; } = null!;
+        public required string OrgName { get; set; } = "";
+        public required string Email { get; set; } = "";
+        public required string Password { get; set; } = "";
     }
 }

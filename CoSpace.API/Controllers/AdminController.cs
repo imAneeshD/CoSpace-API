@@ -51,7 +51,14 @@ namespace CoSpace.API.Controllers
         [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
-            Request.Headers.TryGetValue("RefreshToken", out var token);
+            Request.Headers.TryGetValue("refreshtoken", out var token);
+
+            if (token.ToString() == null)
+            {
+                apiResponse.Success = false;
+                apiResponse.Message = "RefreshToken header missing.";
+                return BadRequest(apiResponse);
+            }
 
             var refreshToken = refreshTokenService.GetRefreshToken(token.ToString()).Result;
             if (refreshToken == null || refreshToken.IsRevoked)
