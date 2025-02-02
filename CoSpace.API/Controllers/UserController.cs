@@ -164,7 +164,7 @@ namespace CoSpace.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDTO UserDto)
         {
-            if (UserDto.OrganizationId != currentUserService.OrgId)
+            if (UserDto.OrganizationId != currentUserService.OrgId && (currentUserService.OrgId != 1 && currentUserService.Role != 1))
             {
                 apiResponse.Success = false;
                 apiResponse.Data = "You dont have permission to add the user to that organization.";
